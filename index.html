@@ -1009,9 +1009,8 @@
         maximumFractionDigits: 8
       }).format(sats);
 
-      $("#outSats").textContent = `Ꞩ${formattedSats} sats`;
-      $("#outBch").textContent =
-        `${new Intl.NumberFormat("en-US",{maximumFractionDigits:8}).format(bch)} BCH`;
+      $("#outSats").textContent = `Ꞩ${formattedSats}`;
+      $("#outBch").textContent = `Ƀ${formattedBch}`;
       $("#outUsd").textContent = currentUsdRate === null
         ? "Rate unavailable"
         : new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(bch * currentUsdRate);
