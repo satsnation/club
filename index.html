@@ -14,8 +14,7 @@
   <script>
     try {
       const savedTheme = localStorage.getItem("satsnation-theme");
-      document.documentElement.dataset.theme =
-        savedTheme === "light" ? "light" : "dark";
+      document.documentElement.dataset.theme = savedTheme === "light" ? "light" : "dark";
     } catch {
       document.documentElement.dataset.theme = "dark";
     }
@@ -118,10 +117,9 @@
     html[data-theme="dark"] .hero {
       background: radial-gradient(circle at 86% 12%,rgba(32,216,149,.15),transparent 18rem),linear-gradient(120deg,#10211c,#102725 52%,#14243a);
     }
-    .kicker { margin: 0 0 12px; color: #92efc3; font-size: .67rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
     h1 { margin: 0; font: 700 clamp(2.7rem,7vw,5.6rem)/.94 "Space Grotesk",sans-serif; letter-spacing: -.075em; overflow-wrap: anywhere; }
     h1 span { color: #92efc3; }
-    .hero-copy > p:not(.kicker) { max-width: 430px; color: rgba(255,255,255,.8); font-size: .9rem; line-height: 1.6; }
+    .hero-copy > p { max-width: 430px; color: rgba(255,255,255,.8); font-size: .9rem; line-height: 1.6; }
 
     .chart { min-width: 0; padding: 18px; border: 1px solid rgba(255,255,255,.22); border-radius: 17px; background: color-mix(in srgb,var(--surface) 78%,transparent); color: var(--chart-text); backdrop-filter: blur(12px); }
     .chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
@@ -174,6 +172,20 @@
     .close { position: absolute; top: 13px; right: 13px; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); font-size: 1.3rem; cursor: pointer; }
     .dialog p,.dialog li { color: var(--muted); font-size: .84rem; line-height: 1.55; }
     .dialog a { color: var(--green-dark); }
+
+    .consensus-dialog { width: min(100%,680px); padding: 0; }
+    .consensus-header { padding: 27px 28px 22px; border-bottom: 1px solid var(--line); background: linear-gradient(135deg,color-mix(in srgb,var(--green) 12%,var(--surface)),var(--surface) 75%); }
+    .consensus-eyebrow { margin: 0 0 7px !important; color: var(--green-dark) !important; font-size: .68rem !important; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .consensus-header h2 { margin: 0 45px 7px 0; }
+    .consensus-header > p:last-child { max-width: 540px; margin: 0; }
+    .consensus-body { padding: 22px 28px 26px; }
+    .consensus-steps { display: grid; gap: 11px; margin: 0; padding: 0; list-style: none; counter-reset: consensus; }
+    .consensus-steps li { display: grid; grid-template-columns: 35px minmax(0,1fr); align-items: start; gap: 12px; margin: 0; padding: 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--soft); }
+    .consensus-steps li::before { counter-increment: consensus; content: counter(consensus); display: grid; width: 32px; height: 32px; place-items: center; border-radius: 10px; background: color-mix(in srgb,var(--green) 16%,var(--surface)); color: var(--green-dark); font-weight: 800; }
+    .consensus-steps strong { display: block; margin: 1px 0 3px; color: var(--ink); font-size: .86rem; }
+    .consensus-steps span { display: block; color: var(--muted); font-size: .79rem; line-height: 1.5; }
+    .consensus-note { margin: 16px 0 0 !important; padding: 12px 14px; border-left: 3px solid var(--green); border-radius: 0 10px 10px 0; background: color-mix(in srgb,var(--green) 8%,var(--surface)); }
+
     .stats { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
     .stat { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
     .stat strong { display: block; color: var(--green-dark); font: 700 clamp(1.3rem,4vw,2rem) "Space Grotesk",sans-serif; overflow-wrap: anywhere; }
@@ -205,6 +217,11 @@
       .caption { font-size: .8rem; }
       .footer { flex-direction: column; }
       .dialog { padding: 22px 17px; }
+      .consensus-dialog { padding: 0; }
+      .consensus-header { padding: 24px 18px 19px; }
+      .consensus-body { padding: 18px; }
+      .consensus-steps li { grid-template-columns: 31px minmax(0,1fr); gap: 9px; padding: 11px; }
+      .consensus-steps li::before { width: 29px; height: 29px; }
       .stats { grid-template-columns: 1fr; }
     }
     @media(prefers-reduced-motion:reduce) {
@@ -285,18 +302,48 @@
   <button id="backTop" type="button" aria-label="Back to top" hidden>↑</button>
 
   <div class="overlay" id="consensusOverlay" aria-hidden="true">
-    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="consensusTitle" tabindex="-1">
+    <section class="dialog consensus-dialog" role="dialog" aria-modal="true" aria-labelledby="consensusTitle" tabindex="-1">
       <button class="close" type="button" aria-label="Close">×</button>
-      <h2 id="consensusTitle">How consensus works</h2>
-      <p>Bitcoin Cash upgrades are discussed publicly. Developers propose and implement software changes, while miners, businesses, exchanges, and users choose which software and rules to support.</p>
-      <ol>
-        <li>Discuss ideas in forums such as<br><a href="https://bitcoincashresearch.org/" target="_blank" rel="noopener noreferrer">BitcoinCashResearch.org</a>.</li>
-        <li>Document proposals through the<br><a href="https://gitlab.com/im_uname/cash-improvement-proposals/-/blob/master/CHIPs.md" target="_blank" rel="noopener noreferrer">Cash Improvement Proposals process</a>.</li>
-        <li>Review and implement code<br>in node software.</li>
-        <li>At activation, nodes validate blocks<br>according to the rules they run.</li>
-        <li>Participants decide which compatible<br>chains and services they support.</li>
-      </ol>
-      <p>A proposal or discussion does not, by itself,<br>activate a protocol change.</p>
+      <header class="consensus-header">
+        <p class="consensus-eyebrow">Bitcoin Cash governance</p>
+        <h2 id="consensusTitle">How network consensus works</h2>
+        <p>Protocol changes emerge through public discussion, implementation, and voluntary adoption by the people and organizations running the network.</p>
+      </header>
+      <div class="consensus-body">
+        <ol class="consensus-steps">
+          <li>
+            <div>
+              <strong>Discuss the proposal</strong>
+              <span>Community members and developers debate ideas in public forums such as <a href="https://bitcoincashresearch.org/" target="_blank" rel="noopener noreferrer">BitcoinCashResearch.org</a>.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Document and review</strong>
+              <span>Proposals are specified and reviewed through the <a href="https://gitlab.com/im_uname/cash-improvement-proposals/-/blob/master/CHIPs.md" target="_blank" rel="noopener noreferrer">Cash Improvement Proposals process</a>.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Build and test implementations</strong>
+              <span>Node software teams can implement the proposal, invite review, and test changes before activation.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Participants choose what to run</strong>
+              <span>Miners, businesses, exchanges, and users independently decide which software and compatible network rules they support.</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Nodes validate by their rules</strong>
+              <span>Each node independently checks blocks and transactions against the consensus rules in its software.</span>
+            </div>
+          </li>
+        </ol>
+        <p class="consensus-note">A discussion or proposal does not automatically change the protocol. Changes depend on implementation and adoption by network participants.</p>
+      </div>
     </section>
   </div>
 
@@ -315,6 +362,7 @@
           <span>Supply</span>
         </div>
       </div>
+
       <section class="calc">
         <h3>SATS market cap calculator</h3>
         <label for="tokenPrice">Price per token (sats)</label>
@@ -322,7 +370,7 @@
         <label for="tokenQuantity">Number of tokens</label>
         <input id="tokenQuantity" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 1000000">
         <div class="results" aria-live="polite">
-          <div>Market cap (sats): <strong id="outSats">0 sats</strong></div>
+          <div>Market cap (sats): <strong id="outSats">Ꞩ0 sats</strong></div>
           <div>Market cap (BCH): <strong id="outBch">0 BCH</strong></div>
           <div>Market cap (USD): <strong id="outUsd">Loading rate…</strong></div>
         </div>
@@ -932,7 +980,7 @@
       const quantityText = $("#tokenQuantity").value.trim();
 
       if (!priceText || !quantityText) {
-        $("#outSats").textContent = "0 sats";
+        $("#outSats").textContent = "Ꞩ0 sats";
         $("#outBch").textContent = "0 BCH";
         $("#outUsd").textContent = currentUsdRate === null ? "Rate unavailable" : "$0.00";
         return;
@@ -957,8 +1005,11 @@
       }
 
       const bch = sats / 100_000_000;
-      $("#outSats").textContent =
-        `${new Intl.NumberFormat("en-US",{maximumFractionDigits:8}).format(sats)} sats`;
+      const formattedSats = new Intl.NumberFormat("en-US", {
+        maximumFractionDigits: 8
+      }).format(sats);
+
+      $("#outSats").textContent = `Ꞩ${formattedSats} sats`;
       $("#outBch").textContent =
         `${new Intl.NumberFormat("en-US",{maximumFractionDigits:8}).format(bch)} BCH`;
       $("#outUsd").textContent = currentUsdRate === null
@@ -978,7 +1029,7 @@
           Number.isFinite(item?.time) &&
           Number.isFinite(item?.value) &&
           item.value > 0
-        );
+        ).sort((a,b) => a.time - b.time);
 
         if (data.length < 12) return null;
         return { data, savedAt: Number(cached.savedAt) || 0 };
@@ -1003,7 +1054,7 @@
         if (Date.now() - Number(cached.savedAt) > 30 * 60 * 1000) return null;
 
         const data = mergePrices(cached.data);
-        return data.length ? { data, source: cached.source || "saved price data" } : null;
+        return data.length ? { data, source: cached.source || "cached price data" } : null;
       } catch {
         return null;
       }
@@ -1051,40 +1102,58 @@
     }
 
     function parseCpiCsv(text) {
-      const output = [];
+      const lines = String(text || "").replace(/^\uFEFF/, "").trim().split(/\r?\n/);
+      if (lines.length < 2) throw new Error("FRED CSV contains no observations");
 
-      for (const line of String(text).trim().split(/\r?\n/).slice(1)) {
-        const split = line.indexOf(",");
-        if (split < 0) continue;
+      const header = lines.shift().split(",").map(value => value.trim().toUpperCase());
+      const dateIndex = header.findIndex(value =>
+        value === "DATE" || value === "OBSERVATION_DATE"
+      );
+      const valueIndex = header.indexOf("VALUE");
 
-        const date = line.slice(0, split).trim();
-        const value = Number(line.slice(split + 1).trim());
-        const match = date.match(/^(\d{4})-(\d{2})/);
+      if (dateIndex < 0 || valueIndex < 0) {
+        throw new Error("Unexpected FRED CSV format; expected date and value columns");
+      }
 
+      const observations = [];
+
+      for (const line of lines) {
+        const columns = line.split(",");
+        const dateText = columns[dateIndex]?.trim();
+        const valueText = columns[valueIndex]?.trim();
+
+        if (!dateText || !valueText || valueText === ".") continue;
+
+        const match = dateText.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        const value = Number(valueText);
         if (!match || !Number.isFinite(value) || value <= 0) continue;
 
-        output.push({
-          time: Date.UTC(Number(match[1]), Number(match[2]) - 1, 15),
+        observations.push({
+          time: Date.UTC(
+            Number(match[1]),
+            Number(match[2]) - 1,
+            Number(match[3])
+          ),
           value
         });
       }
 
-      return output.sort((a,b) => a.time - b.time);
-    }
+      observations.sort((a,b) => a.time - b.time);
 
-    function mergePrices(points) {
-      const map = new Map();
+      const unique = new Map();
+      for (const point of observations) unique.set(point.time, point);
 
-      for (const point of points) {
-        const timestamp = Number(point.time);
-        const price = Number(point.price);
-        if (!Number.isFinite(timestamp) || !Number.isFinite(price) || price <= 0) continue;
-
-        const time = dayStart(timestamp);
-        map.set(time, { time, price });
+      const result = [...unique.values()];
+      if (result.length < 12) {
+        throw new Error(`Only ${result.length} valid CPI observations received`);
       }
 
-      return [...map.values()].sort((a,b) => a.time - b.time);
+      const latest = result.at(-1);
+      if (!latest || latest.time > Date.now() + 86400000) {
+        throw new Error("CPI response contains an invalid observation date");
+      }
+
+      return result;
     }
 
     async function fastestValid(sources, parse, minCount = 1) {
@@ -1094,7 +1163,7 @@
         try {
           const response = await fetchWithTimeout(
             source.url,
-            source.timeout || 6500,
+            source.timeout || 12000,
             controllers[index].signal
           );
 
@@ -1127,7 +1196,11 @@
       const fredUrl = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCNS";
 
       const sources = [
-        { name: "FRED", url: fredUrl, read: response => response.text() },
+        {
+          name: "FRED",
+          url: fredUrl,
+          read: response => response.text()
+        },
         {
           name: "AllOrigins",
           url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(fredUrl),
@@ -1143,6 +1216,21 @@
       const result = await fastestValid(sources, parseCpiCsv, 12);
       saveCpiCache(result.data);
       return result;
+    }
+
+    function mergePrices(points) {
+      const map = new Map();
+
+      for (const point of points) {
+        const timestamp = Number(point.time);
+        const price = Number(point.price);
+        if (!Number.isFinite(timestamp) || !Number.isFinite(price) || price <= 0) continue;
+
+        const time = dayStart(timestamp);
+        map.set(time, { time, price });
+      }
+
+      return [...map.values()].sort((a,b) => a.time - b.time);
     }
 
     async function getCoinGeckoPrices() {
@@ -1279,14 +1367,11 @@
           throw new Error(`${source.name}: invalid exchange rate`);
         }
 
-        return { rate, source: source.name };
+        return { rate };
       }));
 
       const winner = failures.find(result => result.status === "fulfilled");
-      if (winner) return {
-        rate: winner.value.rate,
-        name: winner.value.source
-      };
+      if (winner) return { rate: winner.value.rate };
 
       throw new Error(failures.map(result =>
         result.reason?.message || "Unknown provider error"
@@ -1299,15 +1384,17 @@
       dataLoadPromise = (async () => {
         const status = $("#chartStatus");
         const savedMarket = readMarketCache();
-        const savedCpi = readCpiCache();
+        const cachedCpi = readCpiCache();
 
         if (savedMarket) market = savedMarket.data;
-        if (savedCpi) cpi = savedCpi.data;
+        if (cachedCpi) {
+          cpi = cachedCpi.data;
+          status.textContent = "Showing cached CPI data while refreshing public sources…";
+        } else {
+          status.textContent = "Fetching BCH prices and U.S. CPI data…";
+        }
 
         drawChart();
-        status.textContent = savedCpi
-          ? "Showing saved CPI while refreshing public providers…"
-          : "Fetching BCH and CPI data from public providers…";
 
         const [marketResult, cpiResult, rateResult] = await Promise.allSettled([
           getPublicMarket(),
@@ -1335,7 +1422,7 @@
           errors.push("BCH price history unavailable");
           console.error("BCH market providers failed:", marketResult.reason);
         } else {
-          errors.push("Showing saved BCH prices");
+          errors.push("Showing cached BCH prices");
         }
 
         if (cpiResult.status === "fulfilled") {
@@ -1344,28 +1431,36 @@
           errors.push("CPI unavailable");
           console.error("CPI providers failed:", cpiResult.reason);
         } else {
-          errors.push("Showing saved CPI");
+          errors.push("Showing cached CPI data");
           console.error("CPI refresh failed; retaining cached observations:", cpiResult.reason);
         }
 
         if (rateResult.status === "fulfilled") {
           currentUsdRate = rateResult.value.rate;
-          $("#rateNote").textContent =
-            `USD estimate uses ${rateResult.value.name}'s public BCH/USD rate.`;
+          $("#rateNote").textContent = "USD estimate uses a live public BCH/USD rate.";
         } else {
           currentUsdRate = null;
           errors.push("BCH/USD rate unavailable");
-          $("#rateNote").textContent = "All public exchange-rate sources failed.";
+          $("#rateNote").textContent = "Public BCH/USD rate is unavailable.";
           console.error("Exchange-rate providers failed:", rateResult.reason);
         }
 
         updateCalculator();
 
+        const latestCpi = cpi.at(-1);
+        if (latestCpi) {
+          const cpiDate = new Date(latestCpi.time).toLocaleDateString("en-US", {
+            timeZone: "UTC",
+            year: "numeric",
+            month: "short"
+          });
+          $("#chartDate").textContent += ` · CPI through ${cpiDate}`;
+        }
+
         if (errors.length) {
           status.textContent = errors.join(" · ") + ".";
         } else {
-          status.textContent =
-            `Live data loaded · prices: ${marketResult.value.source} · CPI: ${cpiResult.value.source}.`;
+          status.textContent = `Live data loaded · prices: ${marketResult.value.source} · CPI: ${cpiResult.value.source}.`;
         }
 
         drawChart();
