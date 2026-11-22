@@ -14,7 +14,8 @@
   <script>
     try {
       const savedTheme = localStorage.getItem("satsnation-theme");
-      document.documentElement.dataset.theme = savedTheme === "light" ? "light" : "dark";
+      document.documentElement.dataset.theme =
+        savedTheme === "light" || savedTheme === "dark" ? savedTheme : "dark";
     } catch {
       document.documentElement.dataset.theme = "dark";
     }
@@ -100,7 +101,11 @@
       color: var(--ink);
       cursor: pointer;
     }
-    .theme-toggle svg { display: block; flex: none; width: 19px; height: 19px; margin: 0; }
+    .theme-toggle svg { display: block; flex: none; width: 19px; height: 19px; }
+    .theme-toggle .sun-icon { display: none; }
+    .theme-toggle .moon-icon { display: block; }
+    html[data-theme="dark"] .theme-toggle .sun-icon { display: block; }
+    html[data-theme="dark"] .theme-toggle .moon-icon { display: none; }
 
     .hero {
       display: grid;
@@ -237,12 +242,16 @@
         <img src="https://i.postimg.cc/kXHDMrkz/sats.png" alt="">
         <span>Sats Nation</span>
       </a>
+
       <div class="header-actions">
         <span class="pill">● BCH ecosystem</span>
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 3v2M12 19v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42m0-12.72-1.42 1.42m-9.88 9.88-1.42 1.42" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" title="Switch to light mode">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20.2 15.4A8.5 8.5 0 0 1 8.6 3.8 8.7 8.7 0 1 0 20.2 15.4Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
         <button class="button" id="openConsensus" type="button">Network consensus</button>
@@ -275,7 +284,7 @@
             <span><i class="usd-line" aria-hidden="true"></i>USD ($)</span>
           </div>
           <p class="chart-summary" id="chartSummary" aria-live="polite">Loading data…</p>
-          <p class="chart-status" id="chartStatus" role="status">Trying public data providers…</p>
+          <p class="chart-status" id="chartStatus" role="status">Loading public data…</p>
           <p class="chart-date" id="chartDate">Latest data: —</p>
         </section>
       </section>
@@ -311,36 +320,11 @@
       </header>
       <div class="consensus-body">
         <ol class="consensus-steps">
-          <li>
-            <div>
-              <strong>Discuss the proposal</strong>
-              <span>Community members and developers debate ideas in public forums such as <a href="https://bitcoincashresearch.org/" target="_blank" rel="noopener noreferrer">BitcoinCashResearch.org</a>.</span>
-            </div>
-          </li>
-          <li>
-            <div>
-              <strong>Document and review</strong>
-              <span>Proposals are specified and reviewed through the <a href="https://gitlab.com/im_uname/cash-improvement-proposals/-/blob/master/CHIPs.md" target="_blank" rel="noopener noreferrer">Cash Improvement Proposals process</a>.</span>
-            </div>
-          </li>
-          <li>
-            <div>
-              <strong>Build and test implementations</strong>
-              <span>Node software teams can implement the proposal, invite review, and test changes before activation.</span>
-            </div>
-          </li>
-          <li>
-            <div>
-              <strong>Participants choose what to run</strong>
-              <span>Miners, businesses, exchanges, and users independently decide which software and compatible network rules they support.</span>
-            </div>
-          </li>
-          <li>
-            <div>
-              <strong>Nodes validate by their rules</strong>
-              <span>Each node independently checks blocks and transactions against the consensus rules in its software.</span>
-            </div>
-          </li>
+          <li><div><strong>Discuss the proposal</strong><span>Community members and developers debate ideas in public forums such as <a href="https://bitcoincashresearch.org/" target="_blank" rel="noopener noreferrer">BitcoinCashResearch.org</a>.</span></div></li>
+          <li><div><strong>Document and review</strong><span>Proposals are specified and reviewed through the <a href="https://gitlab.com/im_uname/cash-improvement-proposals/-/blob/master/CHIPs.md" target="_blank" rel="noopener noreferrer">Cash Improvement Proposals process</a>.</span></div></li>
+          <li><div><strong>Build and test implementations</strong><span>Node software teams can implement the proposal, invite review, and test changes before activation.</span></div></li>
+          <li><div><strong>Participants choose what to run</strong><span>Miners, businesses, exchanges, and users independently decide which software and compatible network rules they support.</span></div></li>
+          <li><div><strong>Nodes validate by their rules</strong><span>Each node independently checks blocks and transactions against the consensus rules in its software.</span></div></li>
         </ol>
         <p class="consensus-note">A discussion or proposal does not automatically change the protocol. Changes depend on implementation and adoption by network participants.</p>
       </div>
@@ -370,11 +354,11 @@
         <label for="tokenQuantity">Number of tokens</label>
         <input id="tokenQuantity" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 1000000">
         <div class="results" aria-live="polite">
-          <div>Market cap (sats): <strong id="outSats">Ꞩ0 sats</strong></div>
-          <div>Market cap (BCH): <strong id="outBch">0 BCH</strong></div>
-          <div>Market cap (USD): <strong id="outUsd">Loading rate…</strong></div>
+          <div>Market cap (sats): <strong id="outSats">Ꞩ0.00</strong></div>
+          <div>Market cap (BCH): <strong id="outBch">Ƀ0.00</strong></div>
+          <div>Market cap (USD): <strong id="outUsd">$0.00</strong></div>
         </div>
-        <p id="rateNote">Trying public BCH/USD sources.</p>
+        <p id="rateNote" role="status">Loading BCH/USD exchange rate…</p>
       </section>
     </section>
   </div>
@@ -710,7 +694,8 @@
     const $ = (selector, root = document) => root.querySelector(selector);
     const CPI_CACHE_KEY = "satsnation-cpi-cache";
     const MARKET_CACHE_KEY = "satsnation-market-cache";
-    const ADDRESS_REFRESH_MS = 5 * 60 * 1000;
+    const RATE_CACHE_KEY = "satsnation-bch-usd-rate";
+    const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
     let selectedCategory = "All";
     let searchText = "";
@@ -724,8 +709,15 @@
     function setTheme(theme) {
       const value = theme === "light" ? "light" : "dark";
       document.documentElement.dataset.theme = value;
+
+      const nextMode = value === "dark" ? "light" : "dark";
+      const toggle = $("#themeToggle");
+      toggle.setAttribute("aria-label", `Switch to ${nextMode} mode`);
+      toggle.title = `Switch to ${nextMode} mode`;
+
       document.querySelector('meta[name="theme-color"]').content =
         value === "dark" ? "#0b0e12" : "#f5f7f8";
+
       try { localStorage.setItem("satsnation-theme", value); } catch {}
       drawChart();
     }
@@ -733,6 +725,7 @@
     $("#themeToggle").addEventListener("click", () => {
       setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
     });
+    setTheme(document.documentElement.dataset.theme);
 
     function buildFilters() {
       const nav = $("#filters");
@@ -928,6 +921,7 @@
         const items = [...overlay.querySelectorAll('a[href],button,input,[tabindex="0"]')]
           .filter(item => !item.hidden);
         if (!items.length) return;
+
         const first = items[0];
         const last = items[items.length - 1];
 
@@ -940,6 +934,28 @@
         }
       }
     });
+
+    async function fetchWithTimeout(url, timeoutMs = 12000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        const response = await fetch(url, {
+          signal: controller.signal,
+          cache: "no-store",
+          mode: "cors",
+          headers: { Accept: "application/json,text/csv,text/plain,*/*" }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function fetchJson(url, timeoutMs = 12000) {
+      return (await fetchWithTimeout(url, timeoutMs)).json();
+    }
 
     async function loadBchAddressCount() {
       if (addressLoadPromise) return addressLoadPromise;
@@ -957,7 +973,7 @@
         const count = Number(payload?.data?.hodling_addresses);
 
         if (!Number.isSafeInteger(count) || count < 0) {
-          throw new Error("Blockchair response did not contain a valid address count");
+          throw new Error("Invalid address count in Blockchair response");
         }
 
         countElement.textContent = new Intl.NumberFormat("en-US").format(count);
@@ -966,8 +982,7 @@
       })().catch(error => {
         console.error("Blockchair BCH address count failed:", error);
         countElement.textContent = "Unavailable";
-        statusElement.textContent =
-          "Could not load address data from Blockchair. It will retry automatically.";
+        statusElement.textContent = "Could not load address data. It will retry automatically.";
       }).finally(() => {
         addressLoadPromise = null;
       });
@@ -975,66 +990,201 @@
       return addressLoadPromise;
     }
 
+    function formatFixed(value, digits = 2) {
+      return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      }).format(value);
+    }
+
     function updateCalculator() {
       const priceText = $("#tokenPrice").value.trim();
       const quantityText = $("#tokenQuantity").value.trim();
 
       if (!priceText || !quantityText) {
-        $("#outSats").textContent = "Ꞩ0";
-        $("#outBch").textContent = "Ƀ0";
-        $("#outUsd").textContent = "$0";
+        $("#outSats").textContent = "Ꞩ0.00";
+        $("#outBch").textContent = "Ƀ0.00";
+        $("#outUsd").textContent = "$0.00";
         return;
       }
 
-      const price = Number(priceText);
+      const priceSats = Number(priceText);
       const quantity = Number(quantityText);
 
-      if (!Number.isFinite(price) || !Number.isFinite(quantity) || price < 0 || quantity < 0) {
-        $("#outSats").textContent = "Enter valid numbers";
+      if (
+        !Number.isFinite(priceSats) ||
+        !Number.isFinite(quantity) ||
+        priceSats < 0 ||
+        quantity < 0
+      ) {
+        $("#outSats").textContent = "—";
         $("#outBch").textContent = "—";
         $("#outUsd").textContent = "—";
         return;
       }
 
-      const sats = price * quantity;
-      if (!Number.isFinite(sats)) {
-        $("#outSats").textContent = "Value too large";
-        $("#outBch").textContent = "Value too large";
-        $("#outUsd").textContent = "Value too large";
+      const totalSats = priceSats * quantity;
+      const totalBch = totalSats / 100_000_000;
+
+      if (!Number.isFinite(totalSats) || !Number.isFinite(totalBch)) {
+        $("#outSats").textContent = "—";
+        $("#outBch").textContent = "—";
+        $("#outUsd").textContent = "—";
         return;
       }
 
-      const bch = sats / 100_000_000;
-      const formattedSats = new Intl.NumberFormat("en-US", {
-        maximumFractionDigits: 8
-      }).format(sats);
+      $("#outSats").textContent = `Ꞩ${formatFixed(totalSats)}`;
+      $("#outBch").textContent = `Ƀ${formatFixed(totalBch)}`;
 
-      $("#outSats").textContent = `Ꞩ${formattedSats} sats`;
-      $("#outBch").textContent =
-        `${new Intl.NumberFormat("en-US",{maximumFractionDigits:8}).format(bch)} BCH`;
-      $("#outUsd").textContent = currentUsdRate === null
-        ? "Rate unavailable"
-        : new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(bch * currentUsdRate);
+      if (currentUsdRate === null || !Number.isFinite(currentUsdRate)) {
+        $("#outUsd").textContent = "Rate unavailable";
+        return;
+      }
+
+      const usd = totalBch * currentUsdRate;
+      $("#outUsd").textContent = Number.isFinite(usd)
+        ? new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(usd)
+        : "—";
     }
 
     $("#tokenPrice").addEventListener("input", updateCalculator);
     $("#tokenQuantity").addEventListener("input", updateCalculator);
 
+    function readRateCache() {
+      try {
+        const cached = JSON.parse(localStorage.getItem(RATE_CACHE_KEY) || "null");
+        const rate = Number(cached?.rate);
+        const savedAt = Number(cached?.savedAt);
+
+        if (Number.isFinite(rate) && rate > 0) {
+          return {
+            rate,
+            savedAt: Number.isFinite(savedAt) ? savedAt : 0,
+            source: cached.source || "saved rate"
+          };
+        }
+      } catch {}
+      return null;
+    }
+
+    function saveRateCache(rate, source) {
+      try {
+        localStorage.setItem(RATE_CACHE_KEY, JSON.stringify({
+          rate,
+          source,
+          savedAt: Date.now()
+        }));
+      } catch {}
+    }
+
+    async function getPublicBchUsd() {
+      const providers = [
+        {
+          name: "CoinGecko",
+          url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash&vs_currencies=usd",
+          read: async response => Number((await response.json())?.["bitcoin-cash"]?.usd)
+        },
+        {
+          name: "Coinbase",
+          url: "https://api.coinbase.com/v2/prices/BCH-USD/spot",
+          read: async response => Number((await response.json())?.data?.amount)
+        },
+        {
+          name: "Kraken",
+          url: "https://api.kraken.com/0/public/Ticker?pair=BCHUSD",
+          read: async response => {
+            const payload = await response.json();
+            const key = Object.keys(payload.result || {}).find(name => name !== "last");
+            return Number(payload.result?.[key]?.c?.[0]);
+          }
+        },
+        {
+          name: "Binance",
+          url: "https://api.binance.com/api/v3/ticker/price?symbol=BCHUSDT",
+          read: async response => Number((await response.json())?.price)
+        }
+      ];
+
+      const errors = [];
+
+      for (const provider of providers) {
+        try {
+          const response = await fetchWithTimeout(provider.url, 9000);
+          const rate = await provider.read(response);
+          if (!Number.isFinite(rate) || rate <= 0) {
+            throw new Error("Invalid exchange rate");
+          }
+          return { rate, source: provider.name };
+        } catch (error) {
+          errors.push(`${provider.name}: ${error.message}`);
+        }
+      }
+
+      throw new Error(errors.join(" | "));
+    }
+
+    function parseCpiCsv(text) {
+      const lines = String(text || "").replace(/^\uFEFF/, "").trim().split(/\r?\n/);
+      if (lines.length < 2) throw new Error("CPI CSV has no observations");
+
+      const header = lines.shift().split(",").map(value => value.trim().toUpperCase());
+      const dateIndex = header.findIndex(value =>
+        value === "DATE" || value === "OBSERVATION_DATE"
+      );
+      const valueIndex = header.indexOf("VALUE");
+
+      if (dateIndex < 0 || valueIndex < 0) {
+        throw new Error("Unexpected CPI CSV format");
+      }
+
+      const observations = [];
+
+      for (const line of lines) {
+        const columns = line.split(",");
+        const dateMatch = columns[dateIndex]?.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        const value = Number(columns[valueIndex]?.trim());
+
+        if (!dateMatch || !Number.isFinite(value) || value <= 0) continue;
+
+        observations.push({
+          time: Date.UTC(
+            Number(dateMatch[1]),
+            Number(dateMatch[2]) - 1,
+            Number(dateMatch[3])
+          ),
+          value
+        });
+      }
+
+      const unique = new Map();
+      observations.sort((a, b) => a.time - b.time)
+        .forEach(point => unique.set(point.time, point));
+
+      const result = [...unique.values()];
+      if (result.length < 12) throw new Error("Not enough CPI observations");
+      return result;
+    }
+
     function readCpiCache() {
       try {
         const cached = JSON.parse(localStorage.getItem(CPI_CACHE_KEY) || "null");
-        if (!Array.isArray(cached?.data)) return null;
+        if (!Array.isArray(cached?.data)) return [];
 
-        const data = cached.data.filter(item =>
-          Number.isFinite(item?.time) &&
-          Number.isFinite(item?.value) &&
-          item.value > 0
-        ).sort((a,b) => a.time - b.time);
-
-        if (data.length < 12) return null;
-        return { data, savedAt: Number(cached.savedAt) || 0 };
+        return cached.data
+          .map(point => ({ time: Number(point.time), value: Number(point.value) }))
+          .filter(point =>
+            Number.isFinite(point.time) &&
+            Number.isFinite(point.value) &&
+            point.value > 0
+          )
+          .sort((a, b) => a.time - b.time);
       } catch {
-        return null;
+        return [];
       }
     }
 
@@ -1047,16 +1197,60 @@
       } catch {}
     }
 
+    async function getCpiData() {
+      const fredUrl = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCNS";
+      const sources = [
+        { name: "FRED", url: fredUrl },
+        {
+          name: "AllOrigins",
+          url: `https://api.allorigins.win/raw?url=${encodeURIComponent(fredUrl)}`
+        },
+        {
+          name: "Corsproxy",
+          url: `https://corsproxy.io/?url=${encodeURIComponent(fredUrl)}`
+        }
+      ];
+      const errors = [];
+
+      for (const source of sources) {
+        try {
+          const response = await fetchWithTimeout(source.url, 15000);
+          const data = parseCpiCsv(await response.text());
+          saveCpiCache(data);
+          return { data, source: source.name };
+        } catch (error) {
+          errors.push(`${source.name}: ${error.message}`);
+        }
+      }
+
+      throw new Error(errors.join(" | "));
+    }
+
+    function dayStart(timestamp) {
+      const date = new Date(timestamp);
+      return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+    }
+
+    function mergePrices(points) {
+      const byDay = new Map();
+
+      for (const point of points) {
+        const timestamp = Number(point.time);
+        const price = Number(point.price);
+        if (!Number.isFinite(timestamp) || !Number.isFinite(price) || price <= 0) continue;
+        const time = dayStart(timestamp);
+        byDay.set(time, { time, price });
+      }
+
+      return [...byDay.values()].sort((a, b) => a.time - b.time);
+    }
+
     function readMarketCache() {
       try {
         const cached = JSON.parse(localStorage.getItem(MARKET_CACHE_KEY) || "null");
-        if (!Array.isArray(cached?.data)) return null;
-        if (Date.now() - Number(cached.savedAt) > 30 * 60 * 1000) return null;
-
-        const data = mergePrices(cached.data);
-        return data.length ? { data, source: cached.source || "cached price data" } : null;
+        return Array.isArray(cached?.data) ? mergePrices(cached.data) : [];
       } catch {
-        return null;
+        return [];
       }
     }
 
@@ -1070,182 +1264,23 @@
       } catch {}
     }
 
-    async function fetchWithTimeout(url, timeoutMs = 6500, signal) {
-      const controller = new AbortController();
-      const abortFromParent = () => controller.abort();
-      signal?.addEventListener("abort", abortFromParent, { once: true });
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-      try {
-        const response = await fetch(url, {
-          signal: controller.signal,
-          cache: "no-store",
-          mode: "cors",
-          headers: { Accept: "application/json,text/csv,text/plain,*/*" }
-        });
-
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response;
-      } finally {
-        clearTimeout(timer);
-        signal?.removeEventListener("abort", abortFromParent);
-      }
-    }
-
-    async function fetchJson(url, timeoutMs = 12000) {
-      return (await fetchWithTimeout(url, timeoutMs)).json();
-    }
-
-    function dayStart(timestamp) {
-      const date = new Date(timestamp);
-      return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-    }
-
-    function parseCpiCsv(text) {
-      const lines = String(text || "").replace(/^\uFEFF/, "").trim().split(/\r?\n/);
-      if (lines.length < 2) throw new Error("FRED CSV contains no observations");
-
-      const header = lines.shift().split(",").map(value => value.trim().toUpperCase());
-      const dateIndex = header.findIndex(value =>
-        value === "DATE" || value === "OBSERVATION_DATE"
-      );
-      const valueIndex = header.indexOf("VALUE");
-
-      if (dateIndex < 0 || valueIndex < 0) {
-        throw new Error("Unexpected FRED CSV format; expected date and value columns");
-      }
-
-      const observations = [];
-
-      for (const line of lines) {
-        const columns = line.split(",");
-        const dateText = columns[dateIndex]?.trim();
-        const valueText = columns[valueIndex]?.trim();
-
-        if (!dateText || !valueText || valueText === ".") continue;
-
-        const match = dateText.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        const value = Number(valueText);
-        if (!match || !Number.isFinite(value) || value <= 0) continue;
-
-        observations.push({
-          time: Date.UTC(
-            Number(match[1]),
-            Number(match[2]) - 1,
-            Number(match[3])
-          ),
-          value
-        });
-      }
-
-      observations.sort((a,b) => a.time - b.time);
-
-      const unique = new Map();
-      for (const point of observations) unique.set(point.time, point);
-
-      const result = [...unique.values()];
-      if (result.length < 12) {
-        throw new Error(`Only ${result.length} valid CPI observations received`);
-      }
-
-      const latest = result.at(-1);
-      if (!latest || latest.time > Date.now() + 86400000) {
-        throw new Error("CPI response contains an invalid observation date");
-      }
-
-      return result;
-    }
-
-    async function fastestValid(sources, parse, minCount = 1) {
-      const controllers = sources.map(() => new AbortController());
-
-      const attempts = sources.map(async (source, index) => {
-        try {
-          const response = await fetchWithTimeout(
-            source.url,
-            source.timeout || 12000,
-            controllers[index].signal
-          );
-
-          const payload = await source.read(response);
-          const data = parse(payload);
-
-          if (!Array.isArray(data) || data.length < minCount) {
-            throw new Error("Not enough valid observations");
-          }
-
-          return { data, source: source.name };
-        } catch (error) {
-          throw new Error(`${source.name}: ${error.message}`);
-        }
-      });
-
-      try {
-        const winner = await Promise.any(attempts);
-        controllers.forEach(controller => controller.abort());
-        return winner;
-      } catch (error) {
-        const reasons = error.errors || [];
-        throw new Error(reasons.map(item => item.message).join(" | "));
-      } finally {
-        controllers.forEach(controller => controller.abort());
-      }
-    }
-
-    async function getPublicCpi() {
-      const fredUrl = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCNS";
-
-      const sources = [
-        {
-          name: "FRED",
-          url: fredUrl,
-          read: response => response.text()
-        },
-        {
-          name: "AllOrigins",
-          url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(fredUrl),
-          read: response => response.text()
-        },
-        {
-          name: "Corsproxy",
-          url: "https://corsproxy.io/?url=" + encodeURIComponent(fredUrl),
-          read: response => response.text()
-        }
-      ];
-
-      const result = await fastestValid(sources, parseCpiCsv, 12);
-      saveCpiCache(result.data);
-      return result;
-    }
-
-    function mergePrices(points) {
-      const map = new Map();
-
-      for (const point of points) {
-        const timestamp = Number(point.time);
-        const price = Number(point.price);
-        if (!Number.isFinite(timestamp) || !Number.isFinite(price) || price <= 0) continue;
-
-        const time = dayStart(timestamp);
-        map.set(time, { time, price });
-      }
-
-      return [...map.values()].sort((a,b) => a.time - b.time);
-    }
-
     async function getCoinGeckoPrices() {
       const now = Date.now();
-      const start = now - 5 * 366 * 86400000;
-      const url = new URL("https://api.coingecko.com/api/v3/coins/bitcoin-cash/market_chart/range");
+      const url = new URL(
+        "https://api.coingecko.com/api/v3/coins/bitcoin-cash/market_chart/range"
+      );
       url.searchParams.set("vs_currency", "usd");
-      url.searchParams.set("from", String(Math.floor(start / 1000)));
+      url.searchParams.set("from", String(Math.floor((now - 5 * 366 * 86400000) / 1000)));
       url.searchParams.set("to", String(Math.floor(now / 1000)));
 
-      const payload = await fetchJson(url.toString(), 18000);
-      return mergePrices((payload.prices || []).map(row => ({
-        time: Number(row[0]),
-        price: Number(row[1])
+      const payload = await fetchJson(url.toString(), 20000);
+      const data = mergePrices((payload.prices || []).map(row => ({
+        time: row[0],
+        price: row[1]
       })));
+
+      if (data.length < 10) throw new Error("Not enough historical observations");
+      return data;
     }
 
     async function getBinancePrices() {
@@ -1261,53 +1296,42 @@
         url.searchParams.set("endTime", String(now));
         url.searchParams.set("limit", "1000");
 
-        const rows = await fetchJson(url.toString(), 16000);
-        if (!Array.isArray(rows) || !rows.length) break;
+        const rows = await fetchJson(url.toString(), 18000);
+        if (!Array.isArray(rows) || rows.length === 0) break;
 
-        for (const row of rows) {
-          points.push({ time: Number(row[0]), price: Number(row[4]) });
-        }
+        rows.forEach(row => points.push({
+          time: Number(row[0]),
+          price: Number(row[4])
+        }));
 
-        const last = Number(rows.at(-1)?.[0]);
-        if (!Number.isFinite(last) || rows.length < 1000) break;
-        cursor = last + 86400000;
+        const lastTime = Number(rows[rows.length - 1][0]);
+        if (!Number.isFinite(lastTime) || rows.length < 1000) break;
+        cursor = lastTime + 86400000;
       }
 
-      const result = mergePrices(points);
-      if (!result.length) throw new Error("No Binance candles");
-      return result;
+      const data = mergePrices(points);
+      if (data.length < 10) throw new Error("Not enough historical observations");
+      return data;
     }
 
     async function getKrakenPrices() {
-      const nowSeconds = Math.floor(Date.now() / 1000);
-      let since = nowSeconds - 5 * 366 * 86400;
-      const points = [];
+      const url = new URL("https://api.kraken.com/0/public/OHLC");
+      url.searchParams.set("pair", "BCHUSD");
+      url.searchParams.set("interval", "1440");
+      url.searchParams.set("since", String(Math.floor(Date.now() / 1000) - 5 * 366 * 86400));
 
-      for (let page = 0; page < 4; page++) {
-        const url = new URL("https://api.kraken.com/0/public/OHLC");
-        url.searchParams.set("pair", "BCHUSD");
-        url.searchParams.set("interval", "1440");
-        url.searchParams.set("since", String(since));
+      const payload = await fetchJson(url.toString(), 18000);
+      if (payload.error?.length) throw new Error(payload.error.join(", "));
 
-        const payload = await fetchJson(url.toString(), 16000);
-        if (payload.error?.length) throw new Error(payload.error.join(", "));
+      const key = Object.keys(payload.result || {}).find(name => name !== "last");
+      const rows = key ? payload.result[key] : [];
+      const data = mergePrices(rows.map(row => ({
+        time: Number(row[0]) * 1000,
+        price: Number(row[4])
+      })));
 
-        const key = Object.keys(payload.result || {}).find(name => name !== "last");
-        const rows = key ? payload.result[key] : [];
-        if (!Array.isArray(rows) || !rows.length) break;
-
-        for (const row of rows) {
-          points.push({ time: Number(row[0]) * 1000, price: Number(row[4]) });
-        }
-
-        const last = Number(payload.result.last);
-        if (!Number.isFinite(last) || last <= since || rows.length < 2) break;
-        since = last;
-      }
-
-      const result = mergePrices(points);
-      if (!result.length) throw new Error("No Kraken candles");
-      return result;
+      if (data.length < 10) throw new Error("Not enough historical observations");
+      return data;
     }
 
     async function getPublicMarket() {
@@ -1324,15 +1348,167 @@
           if (data.length) return { data, source: provider.name };
         } catch (error) {
           errors.push(`${provider.name}: ${error.message}`);
-          console.warn(`${provider.name} BCH history failed:`, error);
+          console.warn(`BCH historical price provider failed (${provider.name}):`, error);
         }
       }
 
       throw new Error(errors.join(" | "));
     }
 
+    function cpiAt(time) {
+      let result = null;
+      for (const point of cpi) {
+        if (point.time <= time) result = point;
+        else break;
+      }
+      return result;
+    }
+
+    function setChartDate() {
+      const parts = [];
+      const lastMarket = market.at(-1);
+      const lastCpi = cpi.at(-1);
+
+      if (lastMarket) {
+        parts.push(`BCH ${new Date(lastMarket.time).toLocaleDateString("en-US", {
+          timeZone: "UTC",
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        })}`);
+      }
+
+      if (lastCpi) {
+        parts.push(`CPI through ${new Date(lastCpi.time).toLocaleDateString("en-US", {
+          timeZone: "UTC",
+          year: "numeric",
+          month: "short"
+        })}`);
+      }
+
+      $("#chartDate").textContent = parts.length
+        ? `Latest data: ${parts.join(" · ")} UTC`
+        : "Latest data: —";
+    }
+
+    async function attempt(sourceFunction, sourceName) {
+      try {
+        return { ok: true, ...(await sourceFunction()), provider: sourceName };
+      } catch (error) {
+        return { ok: false, error };
+      }
+    }
+
+    async function loadLiveData() {
+      if (dataLoadPromise) return dataLoadPromise;
+
+      dataLoadPromise = (async () => {
+        if (!market.length) market = readMarketCache();
+        if (!cpi.length) cpi = readCpiCache();
+
+        const cachedRate = readRateCache();
+        if (cachedRate && currentUsdRate === null) {
+          currentUsdRate = cachedRate.rate;
+          updateCalculator();
+        }
+
+        drawChart();
+        setChartDate();
+        $("#chartStatus").textContent = "Refreshing available market and CPI data…";
+
+        const results = await Promise.all([
+          attempt(getPublicMarket, "market"),
+          attempt(getCpiData, "CPI"),
+          attempt(getPublicBchUsd, "rate")
+        ]);
+
+        const [marketResult, cpiResult, rateResult] = results;
+        const notes = [];
+
+        if (marketResult.ok) {
+          market = marketResult.data;
+          saveMarketCache(market, marketResult.source);
+        } else if (market.length) {
+          notes.push("showing saved price history");
+          console.warn("Historical market data refresh failed:", marketResult.error);
+        } else {
+          notes.push("historical prices unavailable");
+          console.error("All historical market providers failed:", marketResult.error);
+        }
+
+        if (cpiResult.ok) {
+          cpi = cpiResult.data;
+        } else if (cpi.length) {
+          notes.push("showing saved CPI data");
+          console.warn("CPI refresh failed; saved data remains visible:", cpiResult.error);
+        } else {
+          notes.push("CPI unavailable");
+          console.error("All CPI providers failed:", cpiResult.error);
+        }
+
+        if (rateResult.ok) {
+          currentUsdRate = rateResult.rate;
+          saveRateCache(rateResult.rate, rateResult.source);
+          $("#rateNote").textContent =
+            `USD conversion uses the live ${rateResult.source} BCH/USD rate.`;
+        } else if (cachedRate) {
+          currentUsdRate = cachedRate.rate;
+          notes.push("using saved BCH/USD rate");
+          $("#rateNote").textContent =
+            `Live rate unavailable; using saved ${cachedRate.source}.`;
+          console.warn("Live exchange-rate refresh failed:", rateResult.error);
+        } else {
+          currentUsdRate = null;
+          notes.push("BCH/USD rate unavailable");
+          $("#rateNote").textContent =
+            "BCH/USD rate unavailable; USD value cannot be calculated.";
+          console.error("All BCH/USD providers failed:", rateResult.error);
+        }
+
+        updateCalculator();
+        drawChart();
+        setChartDate();
+
+        if (notes.length) {
+          $("#chartStatus").textContent = `Data status: ${notes.join(" · ")}.`;
+        } else {
+          $("#chartStatus").textContent =
+            `All data refreshed successfully · prices: ${marketResult.source} · CPI: ${cpiResult.source}.`;
+        }
+      })().finally(() => {
+        dataLoadPromise = null;
+      });
+
+      return dataLoadPromise;
+    }
+
+    function readRateCache() {
+      try {
+        const cached = JSON.parse(localStorage.getItem(RATE_CACHE_KEY) || "null");
+        const rate = Number(cached?.rate);
+        if (Number.isFinite(rate) && rate > 0) {
+          return {
+            rate,
+            source: cached.source || "saved rate",
+            savedAt: Number(cached.savedAt) || 0
+          };
+        }
+      } catch {}
+      return null;
+    }
+
+    function saveRateCache(rate, source) {
+      try {
+        localStorage.setItem(RATE_CACHE_KEY, JSON.stringify({
+          rate,
+          source,
+          savedAt: Date.now()
+        }));
+      } catch {}
+    }
+
     async function getPublicBchUsd() {
-      const sources = [
+      const providers = [
         {
           name: "CoinGecko",
           url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash&vs_currencies=usd",
@@ -1347,9 +1523,9 @@
           name: "Kraken",
           url: "https://api.kraken.com/0/public/Ticker?pair=BCHUSD",
           read: async response => {
-            const data = await response.json();
-            const key = Object.keys(data.result || {})[0];
-            return Number(data.result?.[key]?.c?.[0]);
+            const payload = await response.json();
+            const key = Object.keys(payload.result || {}).find(name => name !== "last");
+            return Number(payload.result?.[key]?.c?.[0]);
           }
         },
         {
@@ -1358,132 +1534,53 @@
           read: async response => Number((await response.json())?.price)
         }
       ];
+      const errors = [];
 
-      const failures = await Promise.allSettled(sources.map(async source => {
-        const response = await fetchWithTimeout(source.url, 6500);
-        const rate = await source.read(response);
-
-        if (!Number.isFinite(rate) || rate <= 0) {
-          throw new Error(`${source.name}: invalid exchange rate`);
+      for (const provider of providers) {
+        try {
+          const response = await fetchWithTimeout(provider.url, 9000);
+          const rate = await provider.read(response);
+          if (!Number.isFinite(rate) || rate <= 0) throw new Error("Invalid exchange rate");
+          return { rate, source: provider.name };
+        } catch (error) {
+          errors.push(`${provider.name}: ${error.message}`);
         }
+      }
 
-        return { rate };
-      }));
-
-      const winner = failures.find(result => result.status === "fulfilled");
-      if (winner) return { rate: winner.value.rate };
-
-      throw new Error(failures.map(result =>
-        result.reason?.message || "Unknown provider error"
-      ).join(" | "));
+      throw new Error(errors.join(" | "));
     }
 
-    async function loadLiveData() {
-      if (dataLoadPromise) return dataLoadPromise;
+    async function loadBchAddressCount() {
+      if (addressLoadPromise) return addressLoadPromise;
 
-      dataLoadPromise = (async () => {
-        const status = $("#chartStatus");
-        const savedMarket = readMarketCache();
-        const cachedCpi = readCpiCache();
+      addressLoadPromise = (async () => {
+        const response = await fetchWithTimeout(
+          "https://api.blockchair.com/bitcoin-cash/stats",
+          12000
+        );
+        const payload = await response.json();
+        const count = Number(payload?.data?.hodling_addresses);
 
-        if (savedMarket) market = savedMarket.data;
-        if (cachedCpi) {
-          cpi = cachedCpi.data;
-          status.textContent = "Showing cached CPI data while refreshing public sources…";
-        } else {
-          status.textContent = "Fetching BCH prices and U.S. CPI data…";
+        if (!Number.isSafeInteger(count) || count < 0) {
+          throw new Error("Invalid Blockchair address count");
         }
 
-        drawChart();
-
-        const [marketResult, cpiResult, rateResult] = await Promise.allSettled([
-          getPublicMarket(),
-          getPublicCpi(),
-          getPublicBchUsd()
-        ]);
-
-        const errors = [];
-
-        if (marketResult.status === "fulfilled") {
-          market = marketResult.value.data;
-          saveMarketCache(market, marketResult.value.source);
-
-          const latest = market[market.length - 1];
-          $("#chartDate").textContent =
-            "Latest BCH data: " +
-            new Date(latest.time).toLocaleDateString("en-US", {
-              timeZone: "UTC",
-              year: "numeric",
-              month: "short",
-              day: "numeric"
-            }) +
-            " UTC";
-        } else if (!market.length) {
-          errors.push("BCH price history unavailable");
-          console.error("BCH market providers failed:", marketResult.reason);
-        } else {
-          errors.push("Showing cached BCH prices");
-        }
-
-        if (cpiResult.status === "fulfilled") {
-          cpi = cpiResult.value.data;
-        } else if (!cpi.length) {
-          errors.push("CPI unavailable");
-          console.error("CPI providers failed:", cpiResult.reason);
-        } else {
-          errors.push("Showing cached CPI data");
-          console.error("CPI refresh failed; retaining cached observations:", cpiResult.reason);
-        }
-
-        if (rateResult.status === "fulfilled") {
-          currentUsdRate = rateResult.value.rate;
-          $("#rateNote").textContent = "USD estimate uses a live public BCH/USD rate.";
-        } else {
-          currentUsdRate = null;
-          errors.push("BCH/USD rate unavailable");
-          $("#rateNote").textContent = "Public BCH/USD rate is unavailable.";
-          console.error("Exchange-rate providers failed:", rateResult.reason);
-        }
-
-        updateCalculator();
-
-        const latestCpi = cpi.at(-1);
-        if (latestCpi) {
-          const cpiDate = new Date(latestCpi.time).toLocaleDateString("en-US", {
-            timeZone: "UTC",
-            year: "numeric",
-            month: "short"
-          });
-          $("#chartDate").textContent += ` · CPI through ${cpiDate}`;
-        }
-
-        if (errors.length) {
-          status.textContent = errors.join(" · ") + ".";
-        } else {
-          status.textContent = `Live data loaded · prices: ${marketResult.value.source} · CPI: ${cpiResult.value.source}.`;
-        }
-
-        drawChart();
-      })().finally(() => {
-        dataLoadPromise = null;
+        $("#bchAddressCount").textContent = new Intl.NumberFormat("en-US").format(count);
+        $("#bchAddressStatus").textContent =
+          `Live Blockchair data · checked ${new Date().toLocaleTimeString()}`;
+      })().catch(error => {
+        console.error("Blockchair BCH address count failed:", error);
+        $("#bchAddressCount").textContent = "Unavailable";
+        $("#bchAddressStatus").textContent = "Could not load address data. It will retry automatically.";
+      }).finally(() => {
+        addressLoadPromise = null;
       });
 
-      return dataLoadPromise;
-    }
-
-    function cpiAt(time) {
-      let result = null;
-      for (const item of cpi) {
-        if (item.time <= time) result = item;
-        else break;
-      }
-      return result;
+      return addressLoadPromise;
     }
 
     function drawChart() {
       const canvas = $("#chart");
-      if (!canvas) return;
-
       const rect = canvas.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
 
@@ -1495,74 +1592,82 @@
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       context.clearRect(0, 0, rect.width, rect.height);
 
-      if (!market.length) {
-        context.fillStyle = getComputedStyle(document.documentElement)
-          .getPropertyValue("--chart-muted");
+      const style = getComputedStyle(document.documentElement);
+      const axis = style.getPropertyValue("--chart-muted").trim();
+      const grid = style.getPropertyValue("--chart-line").trim();
+
+      if (market.length < 2) {
+        context.fillStyle = axis;
         context.font = '12px "DM Sans",sans-serif';
         context.textAlign = "center";
-        context.fillText("Waiting for public data", rect.width / 2, rect.height / 2);
+        context.textBaseline = "middle";
+        context.fillText("Waiting for BCH price history", rect.width / 2, rect.height / 2);
+        $("#chartSummary").textContent = "Purchasing power data is loading.";
         return;
       }
 
-      const latest = market[market.length - 1];
+      const latest = market.at(-1);
       const startDate = new Date(latest.time);
       startDate.setUTCFullYear(startDate.getUTCFullYear() - chartRange);
       const requestedStart = startDate.getTime();
 
-      let baseline = market[0];
-      for (const item of market) {
-        if (item.time <= requestedStart) baseline = item;
+      let baseline = null;
+      for (const point of market) {
+        if (point.time <= requestedStart) baseline = point;
         else break;
       }
+      if (!baseline) baseline = market.find(point => point.time > requestedStart) || market[0];
 
-      const pricePoints = market.filter(item =>
-        item.time >= baseline.time && item.time <= latest.time
+      const pricePoints = market.filter(point =>
+        point.time >= baseline.time && point.time <= latest.time
       );
-      const satsSeries = pricePoints.map(item => ({
-        time: item.time,
-        value: 100 * baseline.price / item.price
+      const satsSeries = pricePoints.map(point => ({
+        time: point.time,
+        value: 100 * baseline.price / point.price
       }));
 
-      const initialCpi = cpiAt(requestedStart);
-      const latestCpi = cpiAt(latest.time);
-      const dollarSeries = [];
+      const startCpi = cpiAt(baseline.time);
+      const endCpi = cpiAt(latest.time);
+      const usdSeries = [];
 
-      if (initialCpi && latestCpi) {
-        dollarSeries.push({ time: requestedStart, value: 100 });
+      if (startCpi && endCpi) {
+        usdSeries.push({ time: baseline.time, value: 100 });
 
-        for (const item of cpi) {
-          if (item.time > requestedStart && item.time < latest.time) {
-            dollarSeries.push({
-              time: item.time,
-              value: 100 * initialCpi.value / item.value
+        cpi.forEach(point => {
+          if (point.time > baseline.time && point.time < latest.time) {
+            usdSeries.push({
+              time: point.time,
+              value: 100 * startCpi.value / point.value
             });
           }
-        }
+        });
 
-        dollarSeries.push({
+        usdSeries.push({
           time: latest.time,
-          value: 100 * initialCpi.value / latestCpi.value
+          value: 100 * startCpi.value / endCpi.value
         });
       }
 
-      const allPoints = [...satsSeries, ...dollarSeries];
-      if (!allPoints.length) return;
+      const values = [...satsSeries, ...usdSeries].map(point => point.value);
+      if (!values.length) return;
 
-      const low = Math.min(...allPoints.map(item => item.value));
-      const high = Math.max(...allPoints.map(item => item.value));
-      const extra = Math.max(5, (high - low) * .1);
-      const min = low - extra;
-      const max = high + extra;
-      const padding = { left: 38, right: 8, top: 9, bottom: 25 };
+      let min = Math.min(...values);
+      let max = Math.max(...values);
+      if (max - min < 1) {
+        min -= 5;
+        max += 5;
+      } else {
+        const extra = (max - min) * 0.1;
+        min -= extra;
+        max += extra;
+      }
+
+      const padding = { left: 40, right: 10, top: 10, bottom: 26 };
       const plotWidth = rect.width - padding.left - padding.right;
       const plotHeight = rect.height - padding.top - padding.bottom;
-      const timeSpan = Math.max(1, latest.time - requestedStart);
-      const x = time => padding.left + ((time - requestedStart) / timeSpan) * plotWidth;
+      const timeSpan = Math.max(1, latest.time - baseline.time);
+      const x = time => padding.left + ((time - baseline.time) / timeSpan) * plotWidth;
       const y = value => padding.top + ((max - value) / (max - min)) * plotHeight;
-
-      const style = getComputedStyle(document.documentElement);
-      const axis = style.getPropertyValue("--chart-muted").trim();
-      const grid = style.getPropertyValue("--chart-line").trim();
 
       context.font = '9px "DM Sans",sans-serif';
       context.textBaseline = "middle";
@@ -1583,7 +1688,7 @@
         context.fillText(value.toFixed(0), padding.left - 5, lineY);
       }
 
-      function drawSeries(points, color, dash) {
+      function plot(points, color, dash) {
         if (points.length < 2) return;
 
         context.beginPath();
@@ -1601,31 +1706,40 @@
         context.setLineDash([]);
       }
 
-      drawSeries(dollarSeries, style.getPropertyValue("--chart-red").trim(), [5, 4]);
-      drawSeries(satsSeries, style.getPropertyValue("--chart-green").trim(), []);
+      plot(usdSeries, style.getPropertyValue("--chart-red").trim(), [5, 4]);
+      plot(satsSeries, style.getPropertyValue("--chart-green").trim(), []);
 
-      const satsChange = satsSeries.length ? satsSeries.at(-1).value - 100 : 0;
-      const dollarChange = dollarSeries.length ? dollarSeries.at(-1).value - 100 : null;
-      const dollarLabel = dollarChange === null
-        ? "U.S. CPI unavailable"
-        : `USD ${dollarChange >= 0 ? "+" : ""}${dollarChange.toFixed(1)}%`;
+      const satsChange = satsSeries.at(-1).value - 100;
+      const usdChange = usdSeries.length ? usdSeries.at(-1).value - 100 : null;
+      const usdText = usdChange === null
+        ? "USD purchasing power unavailable"
+        : `USD ${usdChange >= 0 ? "+" : ""}${usdChange.toFixed(1)}%`;
       const satsPerDollar = 100_000_000 / latest.price;
 
       $("#chartSummary").textContent =
-        `SATS ${satsChange >= 0 ? "+" : ""}${satsChange.toFixed(1)}% · ${dollarLabel} · ` +
-        `${new Intl.NumberFormat("en-US",{maximumFractionDigits:0}).format(satsPerDollar)} SATS/USD`;
+        `SATS ${satsChange >= 0 ? "+" : ""}${satsChange.toFixed(1)}% · ${usdText} · ` +
+        `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(satsPerDollar)} SATS/USD`;
 
       context.fillStyle = axis;
       context.textBaseline = "top";
       context.textAlign = "left";
       context.fillText(
-        startDate.toLocaleDateString("en-US",{month:"short",year:"2-digit",timeZone:"UTC"}),
+        new Date(baseline.time).toLocaleDateString("en-US", {
+          month: "short",
+          year: "2-digit",
+          timeZone: "UTC"
+        }),
         padding.left,
         rect.height - padding.bottom + 7
       );
+
       context.textAlign = "right";
       context.fillText(
-        new Date(latest.time).toLocaleDateString("en-US",{month:"short",year:"2-digit",timeZone:"UTC"}),
+        new Date(latest.time).toLocaleDateString("en-US", {
+          month: "short",
+          year: "2-digit",
+          timeZone: "UTC"
+        }),
         rect.width - padding.right,
         rect.height - padding.bottom + 7
       );
@@ -1661,8 +1775,8 @@
     loadLiveData();
     loadBchAddressCount();
 
-    setInterval(loadLiveData, 5 * 60 * 1000);
-    setInterval(loadBchAddressCount, ADDRESS_REFRESH_MS);
+    setInterval(loadLiveData, REFRESH_INTERVAL_MS);
+    setInterval(loadBchAddressCount, REFRESH_INTERVAL_MS);
   </script>
 </body>
 </html>
