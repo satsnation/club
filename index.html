@@ -12,7 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script>
-    // Dark mode is the default. A previously saved theme is respected.
     try {
       const savedTheme = localStorage.getItem("satsnation-theme");
       document.documentElement.dataset.theme =
@@ -102,13 +101,7 @@
       color: var(--ink);
       cursor: pointer;
     }
-    .theme-toggle svg {
-      display: block;
-      flex: none;
-      width: 19px;
-      height: 19px;
-      margin: 0;
-    }
+    .theme-toggle svg { display: block; flex: none; width: 19px; height: 19px; margin: 0; }
 
     .hero {
       display: grid;
@@ -185,6 +178,7 @@
     .stat { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
     .stat strong { display: block; color: var(--green-dark); font: 700 clamp(1.3rem,4vw,2rem) "Space Grotesk",sans-serif; overflow-wrap: anywhere; }
     .stat span { color: var(--muted); font-size: .8rem; }
+    .stat small { display: block; margin-top: 6px; color: var(--muted); font-size: .7rem; }
     .calc { margin-top: 21px; padding-top: 18px; border-top: 1px solid var(--line); }
     .calc label { display: block; margin: 12px 0 6px; font-size: .8rem; font-weight: 700; }
     .calc input { width: 100%; min-height: 43px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: var(--ink); }
@@ -311,10 +305,16 @@
       <button class="close" type="button" aria-label="Close">×</button>
       <h2 id="statsTitle">SATS at a glance</h2>
       <div class="stats">
-        <div class="stat"><strong>25,691,119</strong><span>Addresses</span></div>
-        <div class="stat"><strong>2.1 quadrillion</strong><span>Supply</span></div>
+        <div class="stat">
+          <strong id="bchAddressCount" aria-live="polite">Loading…</strong>
+          <span>Addresses with a balance</span>
+          <small id="bchAddressStatus" role="status">Loading Blockchair data…</small>
+        </div>
+        <div class="stat">
+          <strong>2.1 quadrillion</strong>
+          <span>Supply</span>
+        </div>
       </div>
-      <p><a href="https://blockchair.com/bitcoin-cash" target="_blank" rel="noopener noreferrer">View Bitcoin Cash on Blockchair ↗</a></p>
       <section class="calc">
         <h3>SATS market cap calculator</h3>
         <label for="tokenPrice">Price per token (sats)</label>
@@ -661,8 +661,9 @@
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const CPI_CACHE_KEY = "satsnation-cpi-cache";
-    const CPI_CACHE_MAX_AGE = 30 * 86400000;
     const MARKET_CACHE_KEY = "satsnation-market-cache";
+    const ADDRESS_REFRESH_MS = 5 * 60 * 1000;
+
     let selectedCategory = "All";
     let searchText = "";
     let chartRange = 1;
@@ -670,6 +671,7 @@
     let cpi = [];
     let currentUsdRate = null;
     let dataLoadPromise = null;
+    let addressLoadPromise = null;
 
     function setTheme(theme) {
       const value = theme === "light" ? "light" : "dark";
@@ -840,6 +842,8 @@
       overlay.setAttribute("aria-hidden", "false");
       document.body.classList.add("dialog-open");
       $(".dialog", overlay).focus();
+
+      if (id === "statsOverlay") loadBchAddressCount();
     }
 
     function closeOverlay(overlay) {
@@ -888,6 +892,40 @@
         }
       }
     });
+
+    async function loadBchAddressCount() {
+      if (addressLoadPromise) return addressLoadPromise;
+
+      const countElement = $("#bchAddressCount");
+      const statusElement = $("#bchAddressStatus");
+      statusElement.textContent = "Refreshing from Blockchair…";
+
+      addressLoadPromise = (async () => {
+        const response = await fetchWithTimeout(
+          "https://api.blockchair.com/bitcoin-cash/stats",
+          12000
+        );
+        const payload = await response.json();
+        const count = Number(payload?.data?.hodling_addresses);
+
+        if (!Number.isSafeInteger(count) || count < 0) {
+          throw new Error("Blockchair response did not contain a valid address count");
+        }
+
+        countElement.textContent = new Intl.NumberFormat("en-US").format(count);
+        statusElement.textContent =
+          `Live Blockchair data · checked ${new Date().toLocaleTimeString()}`;
+      })().catch(error => {
+        console.error("Blockchair BCH address count failed:", error);
+        countElement.textContent = "Unavailable";
+        statusElement.textContent =
+          "Could not load address data from Blockchair. It will retry automatically.";
+      }).finally(() => {
+        addressLoadPromise = null;
+      });
+
+      return addressLoadPromise;
+    }
 
     function updateCalculator() {
       const priceText = $("#tokenPrice").value.trim();
@@ -985,13 +1023,12 @@
       const controller = new AbortController();
       const abortFromParent = () => controller.abort();
       signal?.addEventListener("abort", abortFromParent, { once: true });
-
       const timer = setTimeout(() => controller.abort(), timeoutMs);
 
       try {
         const response = await fetch(url, {
           signal: controller.signal,
-          cache: "force-cache",
+          cache: "no-store",
           mode: "cors",
           headers: { Accept: "application/json,text/csv,text/plain,*/*" }
         });
@@ -1090,11 +1127,7 @@
       const fredUrl = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCNS";
 
       const sources = [
-        {
-          name: "FRED",
-          url: fredUrl,
-          read: response => response.text()
-        },
+        { name: "FRED", url: fredUrl, read: response => response.text() },
         {
           name: "AllOrigins",
           url: "https://api.allorigins.win/raw?url=" + encodeURIComponent(fredUrl),
@@ -1258,29 +1291,6 @@
       throw new Error(failures.map(result =>
         result.reason?.message || "Unknown provider error"
       ).join(" | "));
-    }
-
-    function readMarketCache() {
-      try {
-        const cached = JSON.parse(localStorage.getItem(MARKET_CACHE_KEY) || "null");
-        if (!Array.isArray(cached?.data)) return null;
-        if (Date.now() - Number(cached.savedAt) > 30 * 60 * 1000) return null;
-
-        const data = mergePrices(cached.data);
-        return data.length ? { data, source: cached.source || "saved price data" } : null;
-      } catch {
-        return null;
-      }
-    }
-
-    function saveMarketCache(data, source) {
-      try {
-        localStorage.setItem(MARKET_CACHE_KEY, JSON.stringify({
-          data,
-          source,
-          savedAt: Date.now()
-        }));
-      } catch {}
     }
 
     async function loadLiveData() {
@@ -1537,7 +1547,10 @@
     });
 
     window.addEventListener("resize", drawChart, { passive: true });
-    window.addEventListener("online", loadLiveData);
+    window.addEventListener("online", () => {
+      loadLiveData();
+      loadBchAddressCount();
+    });
 
     window.addEventListener("scroll", () => {
       $("#backTop").hidden = window.scrollY < 300;
@@ -1551,7 +1564,10 @@
     renderCards();
     updateCalculator();
     loadLiveData();
+    loadBchAddressCount();
+
     setInterval(loadLiveData, 5 * 60 * 1000);
+    setInterval(loadBchAddressCount, ADDRESS_REFRESH_MS);
   </script>
 </body>
 </html>
