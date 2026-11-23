@@ -358,7 +358,6 @@
           <div>Market cap (BCH): <strong id="outBch">Ƀ0.00</strong></div>
           <div>Market cap (USD): <strong id="outUsd">$0.00</strong></div>
         </div>
-        <p id="rateNote" role="status">Loading BCH/USD exchange rate…</p>
       </section>
     </section>
   </div>
@@ -1449,19 +1448,13 @@
         if (rateResult.ok) {
           currentUsdRate = rateResult.rate;
           saveRateCache(rateResult.rate, rateResult.source);
-          $("#rateNote").textContent =
-            `USD conversion uses the live ${rateResult.source} BCH/USD rate.`;
         } else if (cachedRate) {
           currentUsdRate = cachedRate.rate;
           notes.push("using saved BCH/USD rate");
-          $("#rateNote").textContent =
-            `Live rate unavailable; using saved ${cachedRate.source}.`;
           console.warn("Live exchange-rate refresh failed:", rateResult.error);
         } else {
           currentUsdRate = null;
           notes.push("BCH/USD rate unavailable");
-          $("#rateNote").textContent =
-            "BCH/USD rate unavailable; USD value cannot be calculated.";
           console.error("All BCH/USD providers failed:", rateResult.error);
         }
 
@@ -1480,103 +1473,6 @@
       });
 
       return dataLoadPromise;
-    }
-
-    function readRateCache() {
-      try {
-        const cached = JSON.parse(localStorage.getItem(RATE_CACHE_KEY) || "null");
-        const rate = Number(cached?.rate);
-        if (Number.isFinite(rate) && rate > 0) {
-          return {
-            rate,
-            source: cached.source || "saved rate",
-            savedAt: Number(cached.savedAt) || 0
-          };
-        }
-      } catch {}
-      return null;
-    }
-
-    function saveRateCache(rate, source) {
-      try {
-        localStorage.setItem(RATE_CACHE_KEY, JSON.stringify({
-          rate,
-          source,
-          savedAt: Date.now()
-        }));
-      } catch {}
-    }
-
-    async function getPublicBchUsd() {
-      const providers = [
-        {
-          name: "CoinGecko",
-          url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash&vs_currencies=usd",
-          read: async response => Number((await response.json())?.["bitcoin-cash"]?.usd)
-        },
-        {
-          name: "Coinbase",
-          url: "https://api.coinbase.com/v2/prices/BCH-USD/spot",
-          read: async response => Number((await response.json())?.data?.amount)
-        },
-        {
-          name: "Kraken",
-          url: "https://api.kraken.com/0/public/Ticker?pair=BCHUSD",
-          read: async response => {
-            const payload = await response.json();
-            const key = Object.keys(payload.result || {}).find(name => name !== "last");
-            return Number(payload.result?.[key]?.c?.[0]);
-          }
-        },
-        {
-          name: "Binance",
-          url: "https://api.binance.com/api/v3/ticker/price?symbol=BCHUSDT",
-          read: async response => Number((await response.json())?.price)
-        }
-      ];
-      const errors = [];
-
-      for (const provider of providers) {
-        try {
-          const response = await fetchWithTimeout(provider.url, 9000);
-          const rate = await provider.read(response);
-          if (!Number.isFinite(rate) || rate <= 0) throw new Error("Invalid exchange rate");
-          return { rate, source: provider.name };
-        } catch (error) {
-          errors.push(`${provider.name}: ${error.message}`);
-        }
-      }
-
-      throw new Error(errors.join(" | "));
-    }
-
-    async function loadBchAddressCount() {
-      if (addressLoadPromise) return addressLoadPromise;
-
-      addressLoadPromise = (async () => {
-        const response = await fetchWithTimeout(
-          "https://api.blockchair.com/bitcoin-cash/stats",
-          12000
-        );
-        const payload = await response.json();
-        const count = Number(payload?.data?.hodling_addresses);
-
-        if (!Number.isSafeInteger(count) || count < 0) {
-          throw new Error("Invalid Blockchair address count");
-        }
-
-        $("#bchAddressCount").textContent = new Intl.NumberFormat("en-US").format(count);
-        $("#bchAddressStatus").textContent =
-          `Live Blockchair data · checked ${new Date().toLocaleTimeString()}`;
-      })().catch(error => {
-        console.error("Blockchair BCH address count failed:", error);
-        $("#bchAddressCount").textContent = "Unavailable";
-        $("#bchAddressStatus").textContent = "Could not load address data. It will retry automatically.";
-      }).finally(() => {
-        addressLoadPromise = null;
-      });
-
-      return addressLoadPromise;
     }
 
     function drawChart() {
