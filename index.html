@@ -684,6 +684,7 @@
   { href: "https://solidswap.cash", src: "https://www.google.com/s2/favicons?domain=solidswap.cash&sz=128", caption: "SolidSwap DEX", detail: "DEX", description: "BCH DEX for trading tokens and providing liquidity; in development.", categories: ["DEX"] },
   { href: "https://pagoconbit.com/", src: "https://www.google.com/s2/favicons?domain=pagoconbit.com&sz=128", caption: "PagoConBit", detail: "Merchants", description: "Argentina-based BCH service for bills, gift cards, and digital goods.", categories: ["Merchants"] }
 ];
+
     const categories = [
       "Wallets","Exchanges","DeFi","DEX","CashTokens","Wrapped BCH",
       "Explorer","Developer tools","Infrastructure","Privacy",
@@ -704,6 +705,14 @@
     let currentUsdRate = null;
     let dataLoadPromise = null;
     let addressLoadPromise = null;
+
+    function shuffleFiguresOnLoad(items) {
+      // Fisher–Yates shuffle: every figure can occupy any position.
+      for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+    }
 
     function setTheme(theme) {
       const value = theme === "light" ? "light" : "dark";
@@ -1665,6 +1674,7 @@
       window.scrollTo({ top: 0, behavior: "smooth" })
     );
 
+    shuffleFiguresOnLoad(figures);
     buildFilters();
     renderCards();
     updateCalculator();
