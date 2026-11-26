@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b0e12">
-  <meta name="description" content="Explore the Bitcoin Cash ecosystem and compare purchasing power.">
-  <title>Sats Nation — Bitcoin Cash Ecosystem</title>
+  <meta name="theme-color" content="#171426">
+  <meta name="description" content="Explore the Bitcoin Cash ecosystem and compare purchasing power in Nebbyville.">
+  <title>Nebbyville — Bitcoin Cash Ecosystem</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +13,7 @@
 
   <script>
     try {
-      const savedTheme = localStorage.getItem("satsnation-theme");
+      const savedTheme = localStorage.getItem("nebbyville-theme");
       document.documentElement.dataset.theme =
         savedTheme === "light" || savedTheme === "dark" ? savedTheme : "dark";
     } catch {
@@ -24,40 +24,40 @@
   <style>
     :root {
       color-scheme: light;
-      --green: #16c784;
-      --green-dark: #0d9f68;
-      --blue: #3687ff;
-      --ink: #11161b;
-      --muted: #65717c;
-      --paper: #f5f7f8;
+      --green: #7955c7;
+      --green-dark: #6040aa;
+      --blue: #558bd6;
+      --ink: #201a2b;
+      --muted: #726b7d;
+      --paper: #f6f2fa;
       --surface: #fff;
-      --soft: #eef2f4;
-      --line: #dce3e7;
-      --chart-text: #17232a;
-      --chart-muted: #5d6d77;
-      --chart-line: rgba(20,40,50,.13);
-      --chart-green: #0c9b67;
-      --chart-red: #c53935;
-      --backdrop: rgba(5,10,15,.65);
+      --soft: #f0eaf6;
+      --line: #e2d9eb;
+      --chart-text: #292133;
+      --chart-muted: #777083;
+      --chart-line: rgba(48,35,64,.13);
+      --chart-green: #7955c7;
+      --chart-red: #d36d93;
+      --backdrop: rgba(13,9,20,.65);
     }
 
     html[data-theme="dark"] {
       color-scheme: dark;
-      --green: #20d895;
-      --green-dark: #36dba3;
-      --blue: #68a9ff;
-      --ink: #f2f6f8;
-      --muted: #a5b1bb;
-      --paper: #0b0e12;
-      --surface: #151a20;
-      --soft: #10161c;
-      --line: #29333d;
-      --chart-text: #f0f5f7;
-      --chart-muted: #a9b7c0;
-      --chart-line: rgba(220,235,245,.12);
-      --chart-green: #20d895;
-      --chart-red: #ff7770;
-      --backdrop: rgba(0,0,0,.83);
+      --green: #c6a3ff;
+      --green-dark: #d0b3ff;
+      --blue: #8fbcff;
+      --ink: #f5effb;
+      --muted: #b4aabe;
+      --paper: #171426;
+      --surface: #211c31;
+      --soft: #1b1729;
+      --line: #393149;
+      --chart-text: #f4eefb;
+      --chart-muted: #b5aabe;
+      --chart-line: rgba(236,223,250,.13);
+      --chart-green: #c6a3ff;
+      --chart-red: #ff91b3;
+      --backdrop: rgba(5,3,10,.84);
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -83,7 +83,7 @@
     .brand { display: flex; align-items: center; gap: 11px; font: 700 1rem "Space Grotesk",sans-serif; text-decoration: none; }
     .brand img { width: 44px; height: 44px; border: 2px solid var(--green); border-radius: 50%; background: var(--surface); object-fit: cover; }
     .header-actions { display: flex; align-items: center; gap: 9px; }
-    .pill { padding: 8px 12px; border: 1px solid color-mix(in srgb,var(--green) 30%,var(--line)); border-radius: 999px; background: color-mix(in srgb,var(--green) 8%,var(--surface)); color: var(--green-dark); font-size: .75rem; font-weight: 700; white-space: nowrap; }
+    .pill { padding: 8px 12px; border: 1px solid color-mix(in srgb,var(--green) 35%,var(--line)); border-radius: 999px; background: color-mix(in srgb,var(--green) 10%,var(--surface)); color: var(--green-dark); font-size: .75rem; font-weight: 700; white-space: nowrap; }
     .button { min-height: 40px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--ink); font-size: .8rem; font-weight: 700; cursor: pointer; }
     .button:hover { border-color: var(--green); }
 
@@ -116,17 +116,23 @@
       overflow: hidden;
       border: 1px solid color-mix(in srgb,var(--ink) 13%,transparent);
       border-radius: 26px;
-      background: radial-gradient(circle at 86% 12%,rgba(255,255,255,.15),transparent 18rem),linear-gradient(120deg,#153c32,#116c61 52%,#205285);
-      color: #f5fbf8;
+      background:
+        radial-gradient(circle at 85% 15%,rgba(255,220,168,.27),transparent 17rem),
+        radial-gradient(circle at 5% 100%,rgba(206,171,255,.2),transparent 20rem),
+        linear-gradient(120deg,#563d85,#8755a1 52%,#bd729e);
+      color: #fff9ff;
     }
     html[data-theme="dark"] .hero {
-      background: radial-gradient(circle at 86% 12%,rgba(32,216,149,.15),transparent 18rem),linear-gradient(120deg,#10211c,#102725 52%,#14243a);
+      background:
+        radial-gradient(circle at 84% 13%,rgba(255,211,151,.16),transparent 18rem),
+        radial-gradient(circle at 3% 95%,rgba(197,155,255,.13),transparent 19rem),
+        linear-gradient(120deg,#281f3c,#392748 52%,#54334f);
     }
     h1 { margin: 0; font: 700 clamp(2.7rem,7vw,5.6rem)/.94 "Space Grotesk",sans-serif; letter-spacing: -.075em; overflow-wrap: anywhere; }
-    h1 span { color: #92efc3; }
-    .hero-copy > p { max-width: 430px; color: rgba(255,255,255,.8); font-size: .9rem; line-height: 1.6; }
+    h1 span { color: #f2c99f; }
+    .hero-copy > p { max-width: 430px; color: rgba(255,255,255,.84); font-size: .9rem; line-height: 1.6; }
 
-    .chart { min-width: 0; padding: 18px; border: 1px solid rgba(255,255,255,.22); border-radius: 17px; background: color-mix(in srgb,var(--surface) 78%,transparent); color: var(--chart-text); backdrop-filter: blur(12px); }
+    .chart { min-width: 0; padding: 18px; border: 1px solid rgba(255,255,255,.22); border-radius: 17px; background: color-mix(in srgb,var(--surface) 82%,transparent); color: var(--chart-text); backdrop-filter: blur(12px); }
     .chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
     .chart h2 { margin: 0; font: 700 1.15rem "Space Grotesk",sans-serif; letter-spacing: -.04em; }
     .chart-subtitle { margin: 4px 0 0; color: var(--chart-muted); font-size: .68rem; }
@@ -150,7 +156,7 @@
     .toolbar { margin: 19px 0 13px; }
     #filters { display: flex; flex-wrap: wrap; gap: 7px; }
     .filter { padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: .74rem; font-weight: 700; cursor: pointer; }
-    .filter[aria-pressed="true"] { border-color: var(--green); background: color-mix(in srgb,var(--green) 14%,var(--surface)); color: var(--green-dark); }
+    .filter[aria-pressed="true"] { border-color: var(--green); background: color-mix(in srgb,var(--green) 15%,var(--surface)); color: var(--green-dark); }
     #search { width: min(100%,340px); min-height: 42px; margin-top: 12px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); }
     .count { color: var(--muted); font-size: .76rem; }
     #figures { display: grid; grid-template-columns: repeat(auto-fill,minmax(175px,1fr)); gap: 13px; }
@@ -179,17 +185,17 @@
     .dialog a { color: var(--green-dark); }
 
     .consensus-dialog { width: min(100%,680px); padding: 0; }
-    .consensus-header { padding: 27px 28px 22px; border-bottom: 1px solid var(--line); background: linear-gradient(135deg,color-mix(in srgb,var(--green) 12%,var(--surface)),var(--surface) 75%); }
+    .consensus-header { padding: 27px 28px 22px; border-bottom: 1px solid var(--line); background: linear-gradient(135deg,color-mix(in srgb,var(--green) 15%,var(--surface)),var(--surface) 75%); }
     .consensus-eyebrow { margin: 0 0 7px !important; color: var(--green-dark) !important; font-size: .68rem !important; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
     .consensus-header h2 { margin: 0 45px 7px 0; }
     .consensus-header > p:last-child { max-width: 540px; margin: 0; }
     .consensus-body { padding: 22px 28px 26px; }
     .consensus-steps { display: grid; gap: 11px; margin: 0; padding: 0; list-style: none; counter-reset: consensus; }
     .consensus-steps li { display: grid; grid-template-columns: 35px minmax(0,1fr); align-items: start; gap: 12px; margin: 0; padding: 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--soft); }
-    .consensus-steps li::before { counter-increment: consensus; content: counter(consensus); display: grid; width: 32px; height: 32px; place-items: center; border-radius: 10px; background: color-mix(in srgb,var(--green) 16%,var(--surface)); color: var(--green-dark); font-weight: 800; }
+    .consensus-steps li::before { counter-increment: consensus; content: counter(consensus); display: grid; width: 32px; height: 32px; place-items: center; border-radius: 10px; background: color-mix(in srgb,var(--green) 20%,var(--surface)); color: var(--green-dark); font-weight: 800; }
     .consensus-steps strong { display: block; margin: 1px 0 3px; color: var(--ink); font-size: .86rem; }
     .consensus-steps span { display: block; color: var(--muted); font-size: .79rem; line-height: 1.5; }
-    .consensus-note { margin: 16px 0 0 !important; padding: 12px 14px; border-left: 3px solid var(--green); border-radius: 0 10px 10px 0; background: color-mix(in srgb,var(--green) 8%,var(--surface)); }
+    .consensus-note { margin: 16px 0 0 !important; padding: 12px 14px; border-left: 3px solid var(--green); border-radius: 0 10px 10px 0; background: color-mix(in srgb,var(--green) 10%,var(--surface)); }
 
     .stats { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
     .stat { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
@@ -199,7 +205,7 @@
     .calc { margin-top: 21px; padding-top: 18px; border-top: 1px solid var(--line); }
     .calc label { display: block; margin: 12px 0 6px; font-size: .8rem; font-weight: 700; }
     .calc input { width: 100%; min-height: 43px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: var(--ink); }
-    .results { margin-top: 13px; padding: 12px; border-radius: 12px; background: color-mix(in srgb,var(--green) 9%,var(--surface)); font-size: .82rem; line-height: 1.8; }
+    .results { margin-top: 13px; padding: 12px; border-radius: 12px; background: color-mix(in srgb,var(--green) 10%,var(--surface)); font-size: .82rem; line-height: 1.8; }
     .results strong { color: var(--green-dark); }
 
     @media(min-width:900px) {
@@ -238,9 +244,9 @@
 <body>
   <div class="page">
     <header class="header">
-      <a class="brand" href="#" aria-label="Sats Nation home">
-        <img src="https://i.postimg.cc/kXHDMrkz/sats.png" alt="">
-        <span>Sats Nation</span>
+      <a class="brand" href="#" aria-label="Nebbyville home">
+        <img src="https://i.postimg.cc/mkyWWLsb/nebbyville.jpg" alt="Nebby, curator of Nebbyville">
+        <span>Nebbyville</span>
       </a>
 
       <div class="header-actions">
@@ -261,7 +267,7 @@
     <main>
       <section class="hero">
         <div class="hero-copy">
-          <h1>Satoshi’s<br><span>Standard</span></h1>
+          <h1>Welcome to<br><span>Nebbyville</span></h1>
           <p>Explore the Bitcoin Cash ecosystem<br>and compare purchasing power.</p>
           <button class="button" id="openStats" type="button">Stats &amp; calculator ↗</button>
         </div>
@@ -290,7 +296,7 @@
       </section>
 
       <section class="section" id="ecosystem">
-        <span class="section-kicker">Explore the network</span>
+        <span class="section-kicker">Explore Nebbyville</span>
         <h2 class="section-title">BCH ecosystem directory</h2>
         <p class="section-intro">Browse projects, services, and resources.</p>
         <div class="toolbar">
@@ -303,7 +309,7 @@
     </main>
 
     <footer class="footer">
-      <span>Sats Nation · Built for the Bitcoin Cash community</span>
+      <span>Nebbyville · Curated by Nebby for the Bitcoin Cash community</span>
       <a href="https://x.com/satsnation" target="_blank" rel="noopener noreferrer">Follow on X ↗</a>
     </footer>
   </div>
@@ -684,7 +690,6 @@
   { href: "https://solidswap.cash", src: "https://www.google.com/s2/favicons?domain=solidswap.cash&sz=128", caption: "SolidSwap DEX", detail: "DEX", description: "BCH DEX for trading tokens and providing liquidity; in development.", categories: ["DEX"] },
   { href: "https://pagoconbit.com/", src: "https://www.google.com/s2/favicons?domain=pagoconbit.com&sz=128", caption: "PagoConBit", detail: "Merchants", description: "Argentina-based BCH service for bills, gift cards, and digital goods.", categories: ["Merchants"] }
 ];
-
     const categories = [
       "Wallets","Exchanges","DeFi","DEX","CashTokens","Wrapped BCH",
       "Explorer","Developer tools","Infrastructure","Privacy",
@@ -692,9 +697,9 @@
     ];
 
     const $ = (selector, root = document) => root.querySelector(selector);
-    const CPI_CACHE_KEY = "satsnation-cpi-cache";
-    const MARKET_CACHE_KEY = "satsnation-market-cache";
-    const RATE_CACHE_KEY = "satsnation-bch-usd-rate";
+    const CPI_CACHE_KEY = "nebbyville-cpi-cache";
+    const MARKET_CACHE_KEY = "nebbyville-market-cache";
+    const RATE_CACHE_KEY = "nebbyville-bch-usd-rate";
     const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
     let selectedCategory = "All";
@@ -707,7 +712,6 @@
     let addressLoadPromise = null;
 
     function shuffleFiguresOnLoad(items) {
-      // Fisher–Yates shuffle: every figure can occupy any position.
       for (let i = items.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [items[i], items[j]] = [items[j], items[i]];
@@ -724,9 +728,9 @@
       toggle.title = `Switch to ${nextMode} mode`;
 
       document.querySelector('meta[name="theme-color"]').content =
-        value === "dark" ? "#0b0e12" : "#f5f7f8";
+        value === "dark" ? "#171426" : "#f6f2fa";
 
-      try { localStorage.setItem("satsnation-theme", value); } catch {}
+      try { localStorage.setItem("nebbyville-theme", value); } catch {}
       drawChart();
     }
 
