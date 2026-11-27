@@ -33,10 +33,6 @@
       --surface: #fff;
       --soft: #f0eaf6;
       --line: #e2d9eb;
-      --chart-text: #292133;
-      --chart-muted: #777083;
-      --chart-line: rgba(48,35,64,.13);
-      --chart-green: #7955c7;
       --backdrop: rgba(13,9,20,.65);
     }
 
@@ -51,10 +47,6 @@
       --surface: #211c31;
       --soft: #1b1729;
       --line: #393149;
-      --chart-text: #f4eefb;
-      --chart-muted: #b5aabe;
-      --chart-line: rgba(236,223,250,.13);
-      --chart-green: #c6a3ff;
       --backdrop: rgba(5,3,10,.84);
     }
 
@@ -107,7 +99,7 @@
 
     .hero {
       display: grid;
-      grid-template-columns: minmax(0,1.03fr) minmax(300px,.97fr);
+      grid-template-columns: minmax(0,1fr) minmax(300px,.88fr);
       align-items: center;
       gap: 28px;
       padding: clamp(22px,4vw,42px);
@@ -130,18 +122,49 @@
     h1 span { color: #f2c99f; }
     .hero-copy > p { max-width: 430px; color: rgba(255,255,255,.84); font-size: .9rem; line-height: 1.6; }
 
-    .chart { min-width: 0; padding: 18px; border: 1px solid rgba(255,255,255,.22); border-radius: 17px; background: color-mix(in srgb,var(--surface) 82%,transparent); color: var(--chart-text); backdrop-filter: blur(12px); }
-    .chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-    .chart h2 { margin: 0; font: 700 1.15rem "Space Grotesk",sans-serif; letter-spacing: -.04em; }
-    .chart-subtitle { margin: 4px 0 0; color: var(--chart-muted); font-size: .68rem; }
-    .ranges { display: flex; gap: 4px; }
-    .range { padding: 5px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: .65rem; font-weight: 700; cursor: pointer; }
-    .range[aria-pressed="true"] { border-color: var(--green); color: var(--chart-green); }
-    #chart { display: block; width: 100%; height: 190px; margin-top: 12px; }
-    .chart-summary,.chart-status,.chart-date { color: var(--chart-muted); font-size: .68rem; line-height: 1.5; }
-    .chart-summary { margin: 9px 0 0; font-weight: 700; color: var(--chart-text); }
-    .chart-status { min-height: 1.4em; margin: 5px 0 0; }
-    .chart-date { margin: 4px 0 0; text-align: right; }
+    .stats-block {
+      margin-top: 21px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,.28);
+    }
+    .stats-block h2 {
+      margin: 0 0 8px;
+      color: #fff9ff;
+      font: 700 .9rem "Space Grotesk",sans-serif;
+    }
+    .stats { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+    .stat {
+      min-width: 0;
+      padding: 9px 10px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 11px;
+      background: rgba(30,20,44,.2);
+    }
+    .stat strong {
+      display: block;
+      color: #fff;
+      font: 700 clamp(.95rem,2.3vw,1.35rem)/1.15 "Space Grotesk",sans-serif;
+      overflow-wrap: anywhere;
+    }
+    .stat span { display: block; margin-top: 3px; color: rgba(255,255,255,.82); font-size: .68rem; line-height: 1.25; }
+    .stat small { display: block; margin-top: 4px; color: rgba(255,255,255,.68); font-size: .61rem; line-height: 1.3; }
+
+    .calculator {
+      min-width: 0;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 17px;
+      background: color-mix(in srgb,var(--surface) 88%,transparent);
+      color: var(--ink);
+      backdrop-filter: blur(12px);
+    }
+    .calculator h2 { margin: 0; font: 700 1.2rem "Space Grotesk",sans-serif; letter-spacing: -.04em; }
+    .calculator-intro { margin: 4px 0 12px; color: var(--muted); font-size: .7rem; line-height: 1.4; }
+    .calc label { display: block; margin: 9px 0 4px; font-size: .72rem; font-weight: 700; }
+    .calc input { width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--ink); font-size: .82rem; }
+    .results { margin-top: 11px; padding: 10px; border-radius: 11px; background: color-mix(in srgb,var(--green) 10%,var(--surface)); font-size: .74rem; line-height: 1.75; overflow-wrap: anywhere; }
+    .results strong { color: var(--green-dark); }
+    .rate-status { margin: 7px 0 0; color: var(--muted); font-size: .64rem; line-height: 1.4; }
 
     .section { margin-top: 43px; }
     .section-kicker { color: var(--green-dark); font-size: .67rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
@@ -190,17 +213,6 @@
     .consensus-steps span { display: block; color: var(--muted); font-size: .79rem; line-height: 1.5; }
     .consensus-note { margin: 16px 0 0 !important; padding: 12px 14px; border-left: 3px solid var(--green); border-radius: 0 10px 10px 0; background: color-mix(in srgb,var(--green) 10%,var(--surface)); }
 
-    .stats { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
-    .stat { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
-    .stat strong { display: block; color: var(--green-dark); font: 700 clamp(1.3rem,4vw,2rem) "Space Grotesk",sans-serif; overflow-wrap: anywhere; }
-    .stat span { color: var(--muted); font-size: .8rem; }
-    .stat small { display: block; margin-top: 6px; color: var(--muted); font-size: .7rem; }
-    .calc { margin-top: 21px; padding-top: 18px; border-top: 1px solid var(--line); }
-    .calc label { display: block; margin: 12px 0 6px; font-size: .8rem; font-weight: 700; }
-    .calc input { width: 100%; min-height: 43px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: var(--ink); }
-    .results { margin-top: 13px; padding: 12px; border-radius: 12px; background: color-mix(in srgb,var(--green) 10%,var(--surface)); font-size: .82rem; line-height: 1.8; }
-    .results strong { color: var(--green-dark); }
-
     @media(min-width:900px) {
       .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
       #search { flex: 0 0 290px; margin: 0; }
@@ -210,8 +222,9 @@
       .header { align-items: flex-start; flex-direction: column; }
       .header-actions { width: 100%; }
       .hero { grid-template-columns: 1fr; gap: 20px; padding: 23px 16px 16px; border-radius: 20px; }
-      .chart { padding: 14px 12px; }
-      #chart { height: 180px; }
+      .hero-copy { width: 100%; }
+      .stats-block { max-width: 430px; }
+      .calculator { width: 100%; }
       .section { margin-top: 35px; }
       #figures { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
       .card,.card-inner { min-height: 200px; }
@@ -226,10 +239,21 @@
       .consensus-body { padding: 18px; }
       .consensus-steps li { grid-template-columns: 31px minmax(0,1fr); gap: 9px; padding: 11px; }
       .consensus-steps li::before { width: 29px; height: 29px; }
-      .stats { grid-template-columns: 1fr; }
+    }
+    @media(max-width:380px) {
+      .stats { gap: 5px; }
+      .stat { padding: 8px; }
+      .stat strong { font-size: .88rem; }
+      .stat span { font-size: .62rem; }
+      .stat small { font-size: .57rem; }
+      .calculator { padding: 14px; }
     }
     @media(prefers-reduced-motion:reduce) {
-      *,*::before,*::after { scroll-behavior: auto!important; animation-duration: .01ms!important; transition-duration: .01ms!important; }
+      *,*::before,*::after {
+        scroll-behavior: auto!important;
+        animation-duration: .01ms!important;
+        transition-duration: .01ms!important;
+      }
     }
   </style>
 </head>
@@ -262,25 +286,42 @@
         <div class="hero-copy">
           <h1>Welcome to<br><span>Nebbyville</span></h1>
           <p>Explore the Bitcoin Cash ecosystem.</p>
-          <button class="button" id="openStats" type="button">Stats &amp; calculator ↗</button>
+
+          <section class="stats-block" aria-labelledby="statsTitle">
+            <h2 id="statsTitle">Network stats</h2>
+            <div class="stats">
+              <div class="stat">
+                <strong id="bchAddressCount" aria-live="polite">Loading…</strong>
+                <span>BCH addresses with a balance</span>
+                <small id="bchAddressStatus" role="status">Loading Blockchair data…</small>
+              </div>
+              <div class="stat">
+                <strong>2.1 quadrillion</strong>
+                <small>Fixed token supply</small>
+              </div>
+            </div>
+          </section>
         </div>
 
-        <section class="chart" aria-labelledby="chartTitle">
-          <div class="chart-head">
-            <div>
-              <h2 id="chartTitle">Purchasing power</h2>
-              <p class="chart-subtitle">Indexed SATS/USD · start = 100</p>
+        <section class="calculator" aria-labelledby="calcTitle">
+          <h2 id="calcTitle">SATS market cap calculator</h2>
+          <p class="calculator-intro">Estimate a token market cap in sats, BCH, and USD.</p>
+
+          <div class="calc">
+            <label for="tokenPrice">Price per token (sats)</label>
+            <input id="tokenPrice" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 100">
+
+            <label for="tokenQuantity">Number of tokens</label>
+            <input id="tokenQuantity" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 1000000">
+
+            <div class="results" aria-live="polite">
+              <div>Market cap (sats): <strong id="outSats">Ꞩ0.00</strong></div>
+              <div>Market cap (BCH): <strong id="outBch">Ƀ0.00</strong></div>
+              <div>Market cap (USD): <strong id="outUsd">Rate unavailable</strong></div>
             </div>
-            <nav class="ranges" aria-label="Chart period">
-              <button class="range" data-range="1" aria-pressed="true">1Y</button>
-              <button class="range" data-range="3" aria-pressed="false">3Y</button>
-              <button class="range" data-range="5" aria-pressed="false">5Y</button>
-            </nav>
+
+            <p class="rate-status" id="rateStatus" role="status">Loading BCH/USD exchange rate…</p>
           </div>
-          <canvas id="chart" role="img" aria-label="Indexed SATS per U.S. dollar chart"></canvas>
-          <p class="chart-summary" id="chartSummary" aria-live="polite">Loading data…</p>
-          <p class="chart-status" id="chartStatus" role="status">Loading public data…</p>
-          <p class="chart-date" id="chartDate">Latest data: —</p>
         </section>
       </section>
 
@@ -323,37 +364,6 @@
         </ol>
         <p class="consensus-note">A discussion or proposal does not automatically change the protocol. Changes depend on implementation and adoption by network participants.</p>
       </div>
-    </section>
-  </div>
-
-  <div class="overlay" id="statsOverlay" aria-hidden="true">
-    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="statsTitle" tabindex="-1">
-      <button class="close" type="button" aria-label="Close">×</button>
-      <h2 id="statsTitle">SATS at a glance</h2>
-      <div class="stats">
-        <div class="stat">
-          <strong id="bchAddressCount" aria-live="polite">Loading…</strong>
-          <span>Addresses with a balance</span>
-          <small id="bchAddressStatus" role="status">Loading Blockchair data…</small>
-        </div>
-        <div class="stat">
-          <strong>2.1 quadrillion</strong>
-          <span>Supply</span>
-        </div>
-      </div>
-
-      <section class="calc">
-        <h3>SATS market cap calculator</h3>
-        <label for="tokenPrice">Price per token (sats)</label>
-        <input id="tokenPrice" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 100">
-        <label for="tokenQuantity">Number of tokens</label>
-        <input id="tokenQuantity" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 1000000">
-        <div class="results" aria-live="polite">
-          <div>Market cap (sats): <strong id="outSats">Ꞩ0.00</strong></div>
-          <div>Market cap (BCH): <strong id="outBch">Ƀ0.00</strong></div>
-          <div>Market cap (USD): <strong id="outUsd">$0.00</strong></div>
-        </div>
-      </section>
     </section>
   </div>
 
@@ -679,31 +689,23 @@
   { href: "https://solidswap.cash", src: "https://www.google.com/s2/favicons?domain=solidswap.cash&sz=128", caption: "SolidSwap DEX", detail: "DEX", description: "BCH DEX for trading tokens and providing liquidity; in development.", categories: ["DEX"] },
   { href: "https://pagoconbit.com/", src: "https://www.google.com/s2/favicons?domain=pagoconbit.com&sz=128", caption: "PagoConBit", detail: "Merchants", description: "Argentina-based BCH service for bills, gift cards, and digital goods.", categories: ["Merchants"] }
 ];
+
     const categories = [
-      "Wallets","Exchanges","DeFi","DEX","CashTokens","Wrapped BCH",
-      "Explorer","Developer tools","Infrastructure","Privacy",
-      "Gaming","Community","Projects","Merchants","Other"
+      "Wallets", "Exchanges", "DeFi", "DEX", "CashTokens", "Wrapped BCH",
+      "Explorer", "Developer tools", "Infrastructure", "Privacy",
+      "Gaming", "Community", "Projects", "Merchants", "Other"
     ];
 
     const $ = (selector, root = document) => root.querySelector(selector);
-    const MARKET_CACHE_KEY = "nebbyville-market-cache";
     const RATE_CACHE_KEY = "nebbyville-bch-usd-rate";
     const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+    const SATS_PER_BCH = 100_000_000;
 
     let selectedCategory = "All";
     let searchText = "";
-    let chartRange = 1;
-    let market = [];
     let currentUsdRate = null;
-    let dataLoadPromise = null;
+    let rateLoadPromise = null;
     let addressLoadPromise = null;
-
-    function shuffleFiguresOnLoad(items) {
-      for (let i = items.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [items[i], items[j]] = [items[j], items[i]];
-      }
-    }
 
     function setTheme(theme) {
       const value = theme === "light" ? "light" : "dark";
@@ -717,13 +719,15 @@
       document.querySelector('meta[name="theme-color"]').content =
         value === "dark" ? "#171426" : "#f6f2fa";
 
-      try { localStorage.setItem("nebbyville-theme", value); } catch {}
-      drawChart();
+      try {
+        localStorage.setItem("nebbyville-theme", value);
+      } catch {}
     }
 
     $("#themeToggle").addEventListener("click", () => {
       setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
     });
+
     setTheme(document.documentElement.dataset.theme);
 
     function buildFilters() {
@@ -784,7 +788,9 @@
         image.src = item.src || "";
         image.alt = item.caption || "Project";
         image.loading = "lazy";
-        image.onerror = () => { image.hidden = true; };
+        image.onerror = () => {
+          image.hidden = true;
+        };
         link.append(image);
 
         const caption = document.createElement("span");
@@ -828,13 +834,15 @@
         });
         back.addEventListener("click", flip);
 
-        [front, back].forEach(face => face.addEventListener("keydown", event => {
-          if (event.key === "Enter" || event.key === " ") {
-            if (event.target.closest("a")) return;
-            event.preventDefault();
-            flip();
-          }
-        }));
+        [front, back].forEach(face =>
+          face.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+              if (event.target.closest("a")) return;
+              event.preventDefault();
+              flip();
+            }
+          })
+        );
       }
 
       applyFilters();
@@ -845,13 +853,19 @@
 
       document.querySelectorAll("#figures .card").forEach(card => {
         const text = card.textContent.toLocaleLowerCase();
-        const description = $(".description", card)?.textContent.toLocaleLowerCase() || "";
+        const description =
+          $(".description", card)?.textContent.toLocaleLowerCase() || "";
         const cardCategories = JSON.parse(card.dataset.categories || "[]");
-        const categoryOk = selectedCategory === "All" || cardCategories.includes(selectedCategory);
-        const searchOk = !searchText ||
+        const categoryOk =
+          selectedCategory === "All" ||
+          cardCategories.includes(selectedCategory);
+        const searchOk =
+          !searchText ||
           text.includes(searchText) ||
           description.includes(searchText) ||
-          cardCategories.some(value => value.toLocaleLowerCase().includes(searchText));
+          cardCategories.some(value =>
+            value.toLocaleLowerCase().includes(searchText)
+          );
 
         card.hidden = !(categoryOk && searchOk);
         if (!card.hidden) shown++;
@@ -882,22 +896,21 @@
       overlay.setAttribute("aria-hidden", "false");
       document.body.classList.add("dialog-open");
       $(".dialog", overlay).focus();
-
-      if (id === "statsOverlay") loadBchAddressCount();
     }
 
     function closeOverlay(overlay) {
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden", "true");
-      if (!$(".overlay.open")) document.body.classList.remove("dialog-open");
+
+      if (!$(".overlay.open")) {
+        document.body.classList.remove("dialog-open");
+      }
+
       document.getElementById(overlay.dataset.trigger)?.focus();
     }
 
     $("#openConsensus").addEventListener("click", event =>
       openOverlay("consensusOverlay", event.currentTarget)
-    );
-    $("#openStats").addEventListener("click", event =>
-      openOverlay("statsOverlay", event.currentTarget)
     );
 
     document.querySelectorAll(".overlay").forEach(overlay => {
@@ -917,10 +930,11 @@
       }
 
       if (event.key === "Tab") {
-        const items = [...overlay.querySelectorAll('a[href],button,input,[tabindex="0"]')]
-          .filter(item => !item.hidden);
-        if (!items.length) return;
+        const items = [
+          ...overlay.querySelectorAll('a[href],button,input,[tabindex="0"]')
+        ].filter(item => !item.hidden);
 
+        if (!items.length) return;
         const first = items[0];
         const last = items[items.length - 1];
 
@@ -943,17 +957,14 @@
           signal: controller.signal,
           cache: "no-store",
           mode: "cors",
-          headers: { Accept: "application/json,text/csv,text/plain,*/*" }
+          headers: { Accept: "application/json,*/*" }
         });
+
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return response;
       } finally {
         clearTimeout(timer);
       }
-    }
-
-    async function fetchJson(url, timeoutMs = 12000) {
-      return (await fetchWithTimeout(url, timeoutMs)).json();
     }
 
     async function loadBchAddressCount() {
@@ -978,13 +989,16 @@
         countElement.textContent = new Intl.NumberFormat("en-US").format(count);
         statusElement.textContent =
           `Live Blockchair data · checked ${new Date().toLocaleTimeString()}`;
-      })().catch(error => {
-        console.error("Blockchair BCH address count failed:", error);
-        countElement.textContent = "Unavailable";
-        statusElement.textContent = "Could not load address data. It will retry automatically.";
-      }).finally(() => {
-        addressLoadPromise = null;
-      });
+      })()
+        .catch(error => {
+          console.error("Blockchair BCH address count failed:", error);
+          countElement.textContent = "Unavailable";
+          statusElement.textContent =
+            "Address data unavailable; it will retry automatically.";
+        })
+        .finally(() => {
+          addressLoadPromise = null;
+        });
 
       return addressLoadPromise;
     }
@@ -1003,7 +1017,8 @@
       if (!priceText || !quantityText) {
         $("#outSats").textContent = "Ꞩ0.00";
         $("#outBch").textContent = "Ƀ0.00";
-        $("#outUsd").textContent = "$0.00";
+        $("#outUsd").textContent =
+          currentUsdRate === null ? "Rate unavailable" : "$0.00";
         return;
       }
 
@@ -1023,7 +1038,7 @@
       }
 
       const totalSats = priceSats * quantity;
-      const totalBch = totalSats / 100_000_000;
+      const totalBch = totalSats / SATS_PER_BCH;
 
       if (!Number.isFinite(totalSats) || !Number.isFinite(totalBch)) {
         $("#outSats").textContent = "—";
@@ -1056,28 +1071,28 @@
 
     function readRateCache() {
       try {
-        const cached = JSON.parse(localStorage.getItem(RATE_CACHE_KEY) || "null");
+        const cached = JSON.parse(
+          localStorage.getItem(RATE_CACHE_KEY) || "null"
+        );
         const rate = Number(cached?.rate);
-        const savedAt = Number(cached?.savedAt);
 
         if (Number.isFinite(rate) && rate > 0) {
           return {
             rate,
-            savedAt: Number.isFinite(savedAt) ? savedAt : 0,
             source: cached.source || "saved rate"
           };
         }
       } catch {}
+
       return null;
     }
 
     function saveRateCache(rate, source) {
       try {
-        localStorage.setItem(RATE_CACHE_KEY, JSON.stringify({
-          rate,
-          source,
-          savedAt: Date.now()
-        }));
+        localStorage.setItem(
+          RATE_CACHE_KEY,
+          JSON.stringify({ rate, source, savedAt: Date.now() })
+        );
       } catch {}
     }
 
@@ -1086,26 +1101,31 @@
         {
           name: "CoinGecko",
           url: "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin-cash&vs_currencies=usd",
-          read: async response => Number((await response.json())?.["bitcoin-cash"]?.usd)
+          read: async response =>
+            Number((await response.json())?.["bitcoin-cash"]?.usd)
         },
         {
           name: "Coinbase",
           url: "https://api.coinbase.com/v2/prices/BCH-USD/spot",
-          read: async response => Number((await response.json())?.data?.amount)
+          read: async response =>
+            Number((await response.json())?.data?.amount)
         },
         {
           name: "Kraken",
           url: "https://api.kraken.com/0/public/Ticker?pair=BCHUSD",
           read: async response => {
             const payload = await response.json();
-            const key = Object.keys(payload.result || {}).find(name => name !== "last");
+            const key = Object.keys(payload.result || {}).find(
+              name => name !== "last"
+            );
             return Number(payload.result?.[key]?.c?.[0]);
           }
         },
         {
           name: "Binance",
           url: "https://api.binance.com/api/v3/ticker/price?symbol=BCHUSDT",
-          read: async response => Number((await response.json())?.price)
+          read: async response =>
+            Number((await response.json())?.price)
         }
       ];
 
@@ -1115,9 +1135,11 @@
         try {
           const response = await fetchWithTimeout(provider.url, 9000);
           const rate = await provider.read(response);
+
           if (!Number.isFinite(rate) || rate <= 0) {
             throw new Error("Invalid exchange rate");
           }
+
           return { rate, source: provider.name };
         } catch (error) {
           errors.push(`${provider.name}: ${error.message}`);
@@ -1127,381 +1149,73 @@
       throw new Error(errors.join(" | "));
     }
 
-    function dayStart(timestamp) {
-      const date = new Date(timestamp);
-      return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-    }
+    async function loadBchUsdRate() {
+      if (rateLoadPromise) return rateLoadPromise;
 
-    function mergePrices(points) {
-      const byDay = new Map();
-
-      for (const point of points) {
-        const timestamp = Number(point.time);
-        const price = Number(point.price);
-        if (!Number.isFinite(timestamp) || !Number.isFinite(price) || price <= 0) continue;
-        const time = dayStart(timestamp);
-        byDay.set(time, { time, price });
+      const cached = readRateCache();
+      if (cached && currentUsdRate === null) {
+        currentUsdRate = cached.rate;
+        updateCalculator();
+        $("#rateStatus").textContent =
+          `Showing saved BCH/USD rate (${cached.source}) while refreshing.`;
       }
 
-      return [...byDay.values()].sort((a, b) => a.time - b.time);
-    }
+      rateLoadPromise = (async () => {
+        $("#rateStatus").textContent = "Refreshing BCH/USD exchange rate…";
 
-    function readMarketCache() {
-      try {
-        const cached = JSON.parse(localStorage.getItem(MARKET_CACHE_KEY) || "null");
-        return Array.isArray(cached?.data) ? mergePrices(cached.data) : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function saveMarketCache(data, source) {
-      try {
-        localStorage.setItem(MARKET_CACHE_KEY, JSON.stringify({
-          data,
-          source,
-          savedAt: Date.now()
-        }));
-      } catch {}
-    }
-
-    async function getCoinGeckoPrices() {
-      const now = Date.now();
-      const url = new URL(
-        "https://api.coingecko.com/api/v3/coins/bitcoin-cash/market_chart/range"
-      );
-      url.searchParams.set("vs_currency", "usd");
-      url.searchParams.set("from", String(Math.floor((now - 5 * 366 * 86400000) / 1000)));
-      url.searchParams.set("to", String(Math.floor(now / 1000)));
-
-      const payload = await fetchJson(url.toString(), 20000);
-      const data = mergePrices((payload.prices || []).map(row => ({
-        time: row[0],
-        price: row[1]
-      })));
-
-      if (data.length < 10) throw new Error("Not enough historical observations");
-      return data;
-    }
-
-    async function getBinancePrices() {
-      const now = Date.now();
-      let cursor = now - 5 * 366 * 86400000;
-      const points = [];
-
-      for (let page = 0; page < 10; page++) {
-        const url = new URL("https://api.binance.com/api/v3/klines");
-        url.searchParams.set("symbol", "BCHUSDT");
-        url.searchParams.set("interval", "1d");
-        url.searchParams.set("startTime", String(cursor));
-        url.searchParams.set("endTime", String(now));
-        url.searchParams.set("limit", "1000");
-
-        const rows = await fetchJson(url.toString(), 18000);
-        if (!Array.isArray(rows) || rows.length === 0) break;
-
-        rows.forEach(row => points.push({
-          time: Number(row[0]),
-          price: Number(row[4])
-        }));
-
-        const lastTime = Number(rows[rows.length - 1][0]);
-        if (!Number.isFinite(lastTime) || rows.length < 1000) break;
-        cursor = lastTime + 86400000;
-      }
-
-      const data = mergePrices(points);
-      if (data.length < 10) throw new Error("Not enough historical observations");
-      return data;
-    }
-
-    async function getKrakenPrices() {
-      const url = new URL("https://api.kraken.com/0/public/OHLC");
-      url.searchParams.set("pair", "BCHUSD");
-      url.searchParams.set("interval", "1440");
-      url.searchParams.set("since", String(Math.floor(Date.now() / 1000) - 5 * 366 * 86400));
-
-      const payload = await fetchJson(url.toString(), 18000);
-      if (payload.error?.length) throw new Error(payload.error.join(", "));
-
-      const key = Object.keys(payload.result || {}).find(name => name !== "last");
-      const rows = key ? payload.result[key] : [];
-      const data = mergePrices(rows.map(row => ({
-        time: Number(row[0]) * 1000,
-        price: Number(row[4])
-      })));
-
-      if (data.length < 10) throw new Error("Not enough historical observations");
-      return data;
-    }
-
-    async function getPublicMarket() {
-      const providers = [
-        { name: "CoinGecko", run: getCoinGeckoPrices },
-        { name: "Binance", run: getBinancePrices },
-        { name: "Kraken", run: getKrakenPrices }
-      ];
-      const errors = [];
-
-      for (const provider of providers) {
         try {
-          const data = await provider.run();
-          if (data.length) return { data, source: provider.name };
+          const result = await getPublicBchUsd();
+          currentUsdRate = result.rate;
+          saveRateCache(result.rate, result.source);
+          $("#rateStatus").textContent =
+            `BCH/USD rate from ${result.source} · checked ${new Date().toLocaleTimeString()}.`;
         } catch (error) {
-          errors.push(`${provider.name}: ${error.message}`);
-          console.warn(`BCH historical price provider failed (${provider.name}):`, error);
-        }
-      }
+          console.error("Could not load BCH/USD exchange rate:", error);
 
-      throw new Error(errors.join(" | "));
-    }
-
-    function setChartDate() {
-      const lastMarket = market.at(-1);
-
-      $("#chartDate").textContent = lastMarket
-        ? `Latest BCH data: ${new Date(lastMarket.time).toLocaleDateString("en-US", {
-            timeZone: "UTC",
-            year: "numeric",
-            month: "short",
-            day: "numeric"
-          })} UTC`
-        : "Latest data: —";
-    }
-
-    async function attempt(sourceFunction, sourceName) {
-      try {
-        return { ok: true, ...(await sourceFunction()), provider: sourceName };
-      } catch (error) {
-        return { ok: false, error };
-      }
-    }
-
-    async function loadLiveData() {
-      if (dataLoadPromise) return dataLoadPromise;
-
-      dataLoadPromise = (async () => {
-        if (!market.length) market = readMarketCache();
-
-        const cachedRate = readRateCache();
-        if (cachedRate && currentUsdRate === null) {
-          currentUsdRate = cachedRate.rate;
-          updateCalculator();
-        }
-
-        drawChart();
-        setChartDate();
-        $("#chartStatus").textContent = "Refreshing BCH market data…";
-
-        const results = await Promise.all([
-          attempt(getPublicMarket, "market"),
-          attempt(getPublicBchUsd, "rate")
-        ]);
-
-        const [marketResult, rateResult] = results;
-        const notes = [];
-
-        if (marketResult.ok) {
-          market = marketResult.data;
-          saveMarketCache(market, marketResult.source);
-        } else if (market.length) {
-          notes.push("showing saved price history");
-          console.warn("Historical market data refresh failed:", marketResult.error);
-        } else {
-          notes.push("historical prices unavailable");
-          console.error("All historical market providers failed:", marketResult.error);
-        }
-
-        if (rateResult.ok) {
-          currentUsdRate = rateResult.rate;
-          saveRateCache(rateResult.rate, rateResult.source);
-        } else if (cachedRate) {
-          currentUsdRate = cachedRate.rate;
-          console.warn("Live exchange-rate refresh failed:", rateResult.error);
-        } else {
-          currentUsdRate = null;
-          console.error("All BCH/USD providers failed:", rateResult.error);
+          if (cached) {
+            currentUsdRate = cached.rate;
+            $("#rateStatus").textContent =
+              `Live rate unavailable. Showing saved rate from ${cached.source}.`;
+          } else {
+            currentUsdRate = null;
+            $("#rateStatus").textContent =
+              "BCH/USD rate unavailable. USD value cannot be calculated.";
+          }
         }
 
         updateCalculator();
-        drawChart();
-        setChartDate();
-
-        $("#chartStatus").textContent = notes.length
-          ? `Data status: ${notes.join(" · ")}.`
-          : `BCH price history refreshed successfully · ${marketResult.source}.`;
       })().finally(() => {
-        dataLoadPromise = null;
+        rateLoadPromise = null;
       });
 
-      return dataLoadPromise;
+      return rateLoadPromise;
     }
 
-    function drawChart() {
-      const canvas = $("#chart");
-      const rect = canvas.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
-
-      const context = canvas.getContext("2d");
-      context.setTransform(dpr, 0, 0, dpr, 0, 0);
-      context.clearRect(0, 0, rect.width, rect.height);
-
-      const style = getComputedStyle(document.documentElement);
-      const axis = style.getPropertyValue("--chart-muted").trim();
-      const grid = style.getPropertyValue("--chart-line").trim();
-
-      if (market.length < 2) {
-        context.fillStyle = axis;
-        context.font = '12px "DM Sans",sans-serif';
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-        context.fillText("Waiting for BCH price history", rect.width / 2, rect.height / 2);
-        $("#chartSummary").textContent = "SATS/USD data is loading.";
-        return;
-      }
-
-      const latest = market.at(-1);
-      const startDate = new Date(latest.time);
-      startDate.setUTCFullYear(startDate.getUTCFullYear() - chartRange);
-      const requestedStart = startDate.getTime();
-
-      let baseline = null;
-      for (const point of market) {
-        if (point.time <= requestedStart) baseline = point;
-        else break;
-      }
-      if (!baseline) baseline = market.find(point => point.time > requestedStart) || market[0];
-
-      const pricePoints = market.filter(point =>
-        point.time >= baseline.time && point.time <= latest.time
-      );
-      const satsSeries = pricePoints.map(point => ({
-        time: point.time,
-        value: 100 * baseline.price / point.price
-      }));
-
-      const values = satsSeries.map(point => point.value);
-      if (!values.length) return;
-
-      let min = Math.min(...values);
-      let max = Math.max(...values);
-      if (max - min < 1) {
-        min -= 5;
-        max += 5;
-      } else {
-        const extra = (max - min) * 0.1;
-        min -= extra;
-        max += extra;
-      }
-
-      const padding = { left: 40, right: 10, top: 10, bottom: 26 };
-      const plotWidth = rect.width - padding.left - padding.right;
-      const plotHeight = rect.height - padding.top - padding.bottom;
-      const timeSpan = Math.max(1, latest.time - baseline.time);
-      const x = time => padding.left + ((time - baseline.time) / timeSpan) * plotWidth;
-      const y = value => padding.top + ((max - value) / (max - min)) * plotHeight;
-
-      context.font = '9px "DM Sans",sans-serif';
-      context.textBaseline = "middle";
-      context.textAlign = "right";
-
-      for (let i = 0; i <= 4; i++) {
-        const value = min + (max - min) * i / 4;
-        const lineY = y(value);
-
-        context.beginPath();
-        context.moveTo(padding.left, lineY);
-        context.lineTo(rect.width - padding.right, lineY);
-        context.strokeStyle = grid;
-        context.setLineDash([]);
-        context.stroke();
-
-        context.fillStyle = axis;
-        context.fillText(value.toFixed(0), padding.left - 5, lineY);
-      }
-
-      context.beginPath();
-      satsSeries.forEach((point, index) => {
-        if (index === 0) context.moveTo(x(point.time), y(point.value));
-        else context.lineTo(x(point.time), y(point.value));
-      });
-
-      context.strokeStyle = style.getPropertyValue("--chart-green").trim();
-      context.lineWidth = 2.3;
-      context.lineCap = "round";
-      context.lineJoin = "round";
-      context.setLineDash([]);
-      context.stroke();
-
-      const satsChange = satsSeries.at(-1).value - 100;
-      const satsPerDollar = 100_000_000 / latest.price;
-
-      $("#chartSummary").textContent =
-        `SATS ${satsChange >= 0 ? "+" : ""}${satsChange.toFixed(1)}% · ` +
-        `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(satsPerDollar)} SATS/USD`;
-
-      context.fillStyle = axis;
-      context.textBaseline = "top";
-      context.textAlign = "left";
-      context.fillText(
-        new Date(baseline.time).toLocaleDateString("en-US", {
-          month: "short",
-          year: "2-digit",
-          timeZone: "UTC"
-        }),
-        padding.left,
-        rect.height - padding.bottom + 7
-      );
-
-      context.textAlign = "right";
-      context.fillText(
-        new Date(latest.time).toLocaleDateString("en-US", {
-          month: "short",
-          year: "2-digit",
-          timeZone: "UTC"
-        }),
-        rect.width - padding.right,
-        rect.height - padding.bottom + 7
-      );
-    }
-
-    document.querySelectorAll("[data-range]").forEach(button => {
-      button.addEventListener("click", () => {
-        chartRange = Number(button.dataset.range);
-        document.querySelectorAll("[data-range]").forEach(item =>
-          item.setAttribute("aria-pressed", String(item === button))
-        );
-        drawChart();
-      });
-    });
-
-    window.addEventListener("resize", drawChart, { passive: true });
     window.addEventListener("online", () => {
-      loadLiveData();
+      loadBchUsdRate();
       loadBchAddressCount();
     });
 
-    window.addEventListener("scroll", () => {
-      $("#backTop").hidden = window.scrollY < 300;
-    }, { passive: true });
+    window.addEventListener(
+      "scroll",
+      () => {
+        $("#backTop").hidden = window.scrollY < 300;
+      },
+      { passive: true }
+    );
 
     $("#backTop").addEventListener("click", () =>
       window.scrollTo({ top: 0, behavior: "smooth" })
     );
 
-    shuffleFiguresOnLoad(figures);
     buildFilters();
     renderCards();
     updateCalculator();
-    loadLiveData();
     loadBchAddressCount();
+    loadBchUsdRate();
 
-    setInterval(loadLiveData, REFRESH_INTERVAL_MS);
     setInterval(loadBchAddressCount, REFRESH_INTERVAL_MS);
+    setInterval(loadBchUsdRate, REFRESH_INTERVAL_MS);
   </script>
 </body>
 </html>
