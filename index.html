@@ -37,7 +37,6 @@
       --chart-muted: #777083;
       --chart-line: rgba(48,35,64,.13);
       --chart-green: #7955c7;
-      --chart-red: #d36d93;
       --backdrop: rgba(13,9,20,.65);
     }
 
@@ -56,7 +55,6 @@
       --chart-muted: #b5aabe;
       --chart-line: rgba(236,223,250,.13);
       --chart-green: #c6a3ff;
-      --chart-red: #ff91b3;
       --backdrop: rgba(5,3,10,.84);
     }
 
@@ -140,11 +138,7 @@
     .range { padding: 5px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: .65rem; font-weight: 700; cursor: pointer; }
     .range[aria-pressed="true"] { border-color: var(--green); color: var(--chart-green); }
     #chart { display: block; width: 100%; height: 190px; margin-top: 12px; }
-    .legend,.chart-summary,.chart-status,.chart-date { color: var(--chart-muted); font-size: .68rem; line-height: 1.5; }
-    .legend { display: flex; flex-wrap: wrap; gap: 7px 13px; }
-    .legend span { display: inline-flex; align-items: center; gap: 6px; }
-    .legend i { width: 17px; height: 3px; border-radius: 3px; background: var(--chart-green); }
-    .legend .usd-line { background: repeating-linear-gradient(90deg,var(--chart-red) 0 5px,transparent 5px 8px); }
+    .chart-summary,.chart-status,.chart-date { color: var(--chart-muted); font-size: .68rem; line-height: 1.5; }
     .chart-summary { margin: 9px 0 0; font-weight: 700; color: var(--chart-text); }
     .chart-status { min-height: 1.4em; margin: 5px 0 0; }
     .chart-date { margin: 4px 0 0; text-align: right; }
@@ -182,7 +176,6 @@
     .dialog h2 { margin: 0 45px 12px 0; font: 700 1.45rem "Space Grotesk",sans-serif; }
     .close { position: absolute; top: 13px; right: 13px; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); font-size: 1.3rem; cursor: pointer; }
     .dialog p,.dialog li { color: var(--muted); font-size: .84rem; line-height: 1.55; }
-    .dialog a { color: var(--green-dark); }
 
     .consensus-dialog { width: min(100%,680px); padding: 0; }
     .consensus-header { padding: 27px 28px 22px; border-bottom: 1px solid var(--line); background: linear-gradient(135deg,color-mix(in srgb,var(--green) 15%,var(--surface)),var(--surface) 75%); }
@@ -275,8 +268,8 @@
         <section class="chart" aria-labelledby="chartTitle">
           <div class="chart-head">
             <div>
-              <h2 id="chartTitle">Purchasing power</h2>
-              <p class="chart-subtitle">Indexed comparison start = 100</p>
+              <h2 id="chartTitle">BCH purchasing power</h2>
+              <p class="chart-subtitle">Indexed SATS/USD · start = 100</p>
             </div>
             <nav class="ranges" aria-label="Chart period">
               <button class="range" data-range="1" aria-pressed="true">1Y</button>
@@ -284,11 +277,7 @@
               <button class="range" data-range="5" aria-pressed="false">5Y</button>
             </nav>
           </div>
-          <canvas id="chart" role="img" aria-label="Indexed BCH sats per dollar and U.S. dollar purchasing power chart"></canvas>
-          <div class="legend">
-            <span><i aria-hidden="true"></i>SATS (Ꞩ)</span>
-            <span><i class="usd-line" aria-hidden="true"></i>USD ($)</span>
-          </div>
+          <canvas id="chart" role="img" aria-label="Indexed SATS per U.S. dollar chart"></canvas>
           <p class="chart-summary" id="chartSummary" aria-live="polite">Loading data…</p>
           <p class="chart-status" id="chartStatus" role="status">Loading public data…</p>
           <p class="chart-date" id="chartDate">Latest data: —</p>
@@ -697,7 +686,6 @@
     ];
 
     const $ = (selector, root = document) => root.querySelector(selector);
-    const CPI_CACHE_KEY = "nebbyville-cpi-cache";
     const MARKET_CACHE_KEY = "nebbyville-market-cache";
     const RATE_CACHE_KEY = "nebbyville-bch-usd-rate";
     const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
@@ -706,7 +694,6 @@
     let searchText = "";
     let chartRange = 1;
     let market = [];
-    let cpi = [];
     let currentUsdRate = null;
     let dataLoadPromise = null;
     let addressLoadPromise = null;
@@ -1140,104 +1127,6 @@
       throw new Error(errors.join(" | "));
     }
 
-    function parseCpiCsv(text) {
-      const lines = String(text || "").replace(/^\uFEFF/, "").trim().split(/\r?\n/);
-      if (lines.length < 2) throw new Error("CPI CSV has no observations");
-
-      const header = lines.shift().split(",").map(value => value.trim().toUpperCase());
-      const dateIndex = header.findIndex(value =>
-        value === "DATE" || value === "OBSERVATION_DATE"
-      );
-      const valueIndex = header.indexOf("VALUE");
-
-      if (dateIndex < 0 || valueIndex < 0) {
-        throw new Error("Unexpected CPI CSV format");
-      }
-
-      const observations = [];
-
-      for (const line of lines) {
-        const columns = line.split(",");
-        const dateMatch = columns[dateIndex]?.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        const value = Number(columns[valueIndex]?.trim());
-
-        if (!dateMatch || !Number.isFinite(value) || value <= 0) continue;
-
-        observations.push({
-          time: Date.UTC(
-            Number(dateMatch[1]),
-            Number(dateMatch[2]) - 1,
-            Number(dateMatch[3])
-          ),
-          value
-        });
-      }
-
-      const unique = new Map();
-      observations.sort((a, b) => a.time - b.time)
-        .forEach(point => unique.set(point.time, point));
-
-      const result = [...unique.values()];
-      if (result.length < 12) throw new Error("Not enough CPI observations");
-      return result;
-    }
-
-    function readCpiCache() {
-      try {
-        const cached = JSON.parse(localStorage.getItem(CPI_CACHE_KEY) || "null");
-        if (!Array.isArray(cached?.data)) return [];
-
-        return cached.data
-          .map(point => ({ time: Number(point.time), value: Number(point.value) }))
-          .filter(point =>
-            Number.isFinite(point.time) &&
-            Number.isFinite(point.value) &&
-            point.value > 0
-          )
-          .sort((a, b) => a.time - b.time);
-      } catch {
-        return [];
-      }
-    }
-
-    function saveCpiCache(data) {
-      try {
-        localStorage.setItem(CPI_CACHE_KEY, JSON.stringify({
-          data,
-          savedAt: Date.now()
-        }));
-      } catch {}
-    }
-
-    async function getCpiData() {
-      const fredUrl = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCNS";
-      const sources = [
-        { name: "FRED", url: fredUrl },
-        {
-          name: "AllOrigins",
-          url: `https://api.allorigins.win/raw?url=${encodeURIComponent(fredUrl)}`
-        },
-        {
-          name: "Corsproxy",
-          url: `https://corsproxy.io/?url=${encodeURIComponent(fredUrl)}`
-        }
-      ];
-      const errors = [];
-
-      for (const source of sources) {
-        try {
-          const response = await fetchWithTimeout(source.url, 15000);
-          const data = parseCpiCsv(await response.text());
-          saveCpiCache(data);
-          return { data, source: source.name };
-        } catch (error) {
-          errors.push(`${source.name}: ${error.message}`);
-        }
-      }
-
-      throw new Error(errors.join(" | "));
-    }
-
     function dayStart(timestamp) {
       const date = new Date(timestamp);
       return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
@@ -1367,39 +1256,16 @@
       throw new Error(errors.join(" | "));
     }
 
-    function cpiAt(time) {
-      let result = null;
-      for (const point of cpi) {
-        if (point.time <= time) result = point;
-        else break;
-      }
-      return result;
-    }
-
     function setChartDate() {
-      const parts = [];
       const lastMarket = market.at(-1);
-      const lastCpi = cpi.at(-1);
 
-      if (lastMarket) {
-        parts.push(`BCH ${new Date(lastMarket.time).toLocaleDateString("en-US", {
-          timeZone: "UTC",
-          year: "numeric",
-          month: "short",
-          day: "numeric"
-        })}`);
-      }
-
-      if (lastCpi) {
-        parts.push(`CPI through ${new Date(lastCpi.time).toLocaleDateString("en-US", {
-          timeZone: "UTC",
-          year: "numeric",
-          month: "short"
-        })}`);
-      }
-
-      $("#chartDate").textContent = parts.length
-        ? `Latest data: ${parts.join(" · ")} UTC`
+      $("#chartDate").textContent = lastMarket
+        ? `Latest BCH data: ${new Date(lastMarket.time).toLocaleDateString("en-US", {
+            timeZone: "UTC",
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          })} UTC`
         : "Latest data: —";
     }
 
@@ -1416,7 +1282,6 @@
 
       dataLoadPromise = (async () => {
         if (!market.length) market = readMarketCache();
-        if (!cpi.length) cpi = readCpiCache();
 
         const cachedRate = readRateCache();
         if (cachedRate && currentUsdRate === null) {
@@ -1426,15 +1291,14 @@
 
         drawChart();
         setChartDate();
-        $("#chartStatus").textContent = "Refreshing available market and CPI data…";
+        $("#chartStatus").textContent = "Refreshing BCH market data…";
 
         const results = await Promise.all([
           attempt(getPublicMarket, "market"),
-          attempt(getCpiData, "CPI"),
           attempt(getPublicBchUsd, "rate")
         ]);
 
-        const [marketResult, cpiResult, rateResult] = results;
+        const [marketResult, rateResult] = results;
         const notes = [];
 
         if (marketResult.ok) {
@@ -1448,26 +1312,14 @@
           console.error("All historical market providers failed:", marketResult.error);
         }
 
-        if (cpiResult.ok) {
-          cpi = cpiResult.data;
-        } else if (cpi.length) {
-          notes.push("showing saved CPI data");
-          console.warn("CPI refresh failed; saved data remains visible:", cpiResult.error);
-        } else {
-          notes.push("CPI unavailable");
-          console.error("All CPI providers failed:", cpiResult.error);
-        }
-
         if (rateResult.ok) {
           currentUsdRate = rateResult.rate;
           saveRateCache(rateResult.rate, rateResult.source);
         } else if (cachedRate) {
           currentUsdRate = cachedRate.rate;
-          notes.push("using saved BCH/USD rate");
           console.warn("Live exchange-rate refresh failed:", rateResult.error);
         } else {
           currentUsdRate = null;
-          notes.push("BCH/USD rate unavailable");
           console.error("All BCH/USD providers failed:", rateResult.error);
         }
 
@@ -1475,12 +1327,9 @@
         drawChart();
         setChartDate();
 
-        if (notes.length) {
-          $("#chartStatus").textContent = `Data status: ${notes.join(" · ")}.`;
-        } else {
-          $("#chartStatus").textContent =
-            `All data refreshed successfully · prices: ${marketResult.source} · CPI: ${cpiResult.source}.`;
-        }
+        $("#chartStatus").textContent = notes.length
+          ? `Data status: ${notes.join(" · ")}.`
+          : `BCH price history refreshed successfully · ${marketResult.source}.`;
       })().finally(() => {
         dataLoadPromise = null;
       });
@@ -1511,7 +1360,7 @@
         context.textAlign = "center";
         context.textBaseline = "middle";
         context.fillText("Waiting for BCH price history", rect.width / 2, rect.height / 2);
-        $("#chartSummary").textContent = "Purchasing power data is loading.";
+        $("#chartSummary").textContent = "SATS/USD data is loading.";
         return;
       }
 
@@ -1535,29 +1384,7 @@
         value: 100 * baseline.price / point.price
       }));
 
-      const startCpi = cpiAt(baseline.time);
-      const endCpi = cpiAt(latest.time);
-      const usdSeries = [];
-
-      if (startCpi && endCpi) {
-        usdSeries.push({ time: baseline.time, value: 100 });
-
-        cpi.forEach(point => {
-          if (point.time > baseline.time && point.time < latest.time) {
-            usdSeries.push({
-              time: point.time,
-              value: 100 * startCpi.value / point.value
-            });
-          }
-        });
-
-        usdSeries.push({
-          time: latest.time,
-          value: 100 * startCpi.value / endCpi.value
-        });
-      }
-
-      const values = [...satsSeries, ...usdSeries].map(point => point.value);
+      const values = satsSeries.map(point => point.value);
       if (!values.length) return;
 
       let min = Math.min(...values);
@@ -1597,36 +1424,24 @@
         context.fillText(value.toFixed(0), padding.left - 5, lineY);
       }
 
-      function plot(points, color, dash) {
-        if (points.length < 2) return;
+      context.beginPath();
+      satsSeries.forEach((point, index) => {
+        if (index === 0) context.moveTo(x(point.time), y(point.value));
+        else context.lineTo(x(point.time), y(point.value));
+      });
 
-        context.beginPath();
-        points.forEach((point, index) => {
-          if (index === 0) context.moveTo(x(point.time), y(point.value));
-          else context.lineTo(x(point.time), y(point.value));
-        });
-
-        context.strokeStyle = color;
-        context.lineWidth = 2.3;
-        context.lineCap = "round";
-        context.lineJoin = "round";
-        context.setLineDash(dash);
-        context.stroke();
-        context.setLineDash([]);
-      }
-
-      plot(usdSeries, style.getPropertyValue("--chart-red").trim(), [5, 4]);
-      plot(satsSeries, style.getPropertyValue("--chart-green").trim(), []);
+      context.strokeStyle = style.getPropertyValue("--chart-green").trim();
+      context.lineWidth = 2.3;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      context.setLineDash([]);
+      context.stroke();
 
       const satsChange = satsSeries.at(-1).value - 100;
-      const usdChange = usdSeries.length ? usdSeries.at(-1).value - 100 : null;
-      const usdText = usdChange === null
-        ? "USD purchasing power unavailable"
-        : `USD ${usdChange >= 0 ? "+" : ""}${usdChange.toFixed(1)}%`;
       const satsPerDollar = 100_000_000 / latest.price;
 
       $("#chartSummary").textContent =
-        `SATS ${satsChange >= 0 ? "+" : ""}${satsChange.toFixed(1)}% · ${usdText} · ` +
+        `SATS ${satsChange >= 0 ? "+" : ""}${satsChange.toFixed(1)}% · ` +
         `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(satsPerDollar)} SATS/USD`;
 
       context.fillStyle = axis;
